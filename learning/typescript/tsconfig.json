@@ -1,12 +1,14 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "ESNext",
-    "moduleResolution": "node",
+    "module": "NodeNext",                // ✅ Module generation method
+    "moduleResolution": "NodeNext",      // ✅ Module path resolution strategy
+    "experimentalDecorators": true,      // ✅ Support for decorators
+    "emitDecoratorMetadata": true,       // Optional: for use with frameworks like NestJS
+    "strict": true,
     "esModuleInterop": true,
-    "strict": true
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
   },
-  "ts-node": {
-    "esm": true
-  }
+  "include": ["./**/*.ts"]
 }

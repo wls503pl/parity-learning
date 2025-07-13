@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "node --loader ts-node/esm test.ts"
+    "start": "ts-node --esm decorators.ts"
   },
   "dependencies": {
+    "typescript": "^5.0.0"
+  },
+  "devDependencies": {
     "ts-node": "^10.9.1",
-    "typescript": "^5.0.0",
     "@types/node": "^20.0.0"
   }
 }
