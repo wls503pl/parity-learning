@@ -1,3 +1,15 @@
+/**
+ * TypeScript Generic Practice
+ *
+ * Author:  Peile Wu
+ * Email:   peile.wu.1990@gmail.com
+ * Date:    2025/7/12
+ * Purpose: Learning TypeScript generics and constraint systems
+ *          to gain competence for blockchain development positions
+ *
+ * Day 01:  Covers generic classes, type constraints, and keyof operator
+ *          for building type-safe data storage utilities
+ */
 // Exercise: Generic Utility Class
 var DataStore = /** @class */ (function () {
     function DataStore() {
