@@ -105,9 +105,9 @@ PS E:\parity-learning\learning\typescript\day01_codes> node day01_generic-practi
 { id: 1, name: 'Alice', email: 'a@a.com', isActive: true }
 { id: 2, name: 'Bob', email: 'b@b.com', isActive: false }
 ```
-<br>
+
 ![Results](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/typescript/day01_codes/img/day01_generic_practice_result.png)
-<br>
+
 
 The generic `DataStore` class successfully:
 - Stored User objects with type safety
@@ -122,9 +122,9 @@ The generic `DataStore` class successfully:
 ```
 TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for E:\parity-learning\learning\typescript\day01_codes\day01_basic-types.ts
 ```
-<br>
+
 ![Issue](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/typescript/day01_codes/img/day01_cmd_issue_fix1.png)
-<br>
+
 
 **Root Cause:**
 Node.js cannot directly execute TypeScript files (.ts) without proper configuration or compilation.
@@ -136,9 +136,9 @@ Node.js cannot directly execute TypeScript files (.ts) without proper configurat
 npm init -y
 npm install typescript ts-node @types/node
 ```
-<br>
+
 ![Solution](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/typescript/day01_codes/img/day01_cmd_issue_solved.png)
-<br>
+
 
 #### Solution 2: Use ts-node for Direct Execution
 ```bash
@@ -157,9 +157,9 @@ node day01_basic-types.js
 ```
 fatal: unable to access 'https://github.com/wls503pl/parity-learning.git/': Failed to connect to github.com port 443
 ```
-<br>
+
 ![Issue](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/typescript/day01_codes/img/git_pull_push_issue.png)
-<br>
+
 
 **Root Cause:**
 Network connectivity issues or firewall blocking GitHub access.
@@ -176,9 +176,7 @@ git remote set-url origin https://github.com/wls503pl/parity-learning.git
 git push origin outstanding_projects
 ```
 
-<br>
 ![Solution](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/typescript/day01_codes/img/git_pull_push_issue_solved.png)
-<br>
 
 ### Error 3: Package.json Configuration
 
