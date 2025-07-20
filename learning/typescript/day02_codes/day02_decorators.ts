@@ -1,3 +1,28 @@
+/**
+ * TypeScript Decorators Practice
+ *
+ * Author:  Peile Wu
+ * Email:   peile.wu.1990@gmail.com
+ * Date:    2025/7/21
+ * Purpose: Learning TypeScript decorators for method enhancement and monitoring,
+ *          to gain competence for blockchain development positions.
+ *
+ * Day 02:  Covers method decorators, decorator composition, logging decorator,
+ *          performance monitoring decorator, and async method decoration with
+ *          practical API service implementation.
+ *
+ * Additional: This file demonstrates advanced TypeScript features including:
+ *             - Method decorators for cross-cutting concerns
+ *             - Performance monitoring and logging
+ *             - Async/await with decorators
+ *             - Real-world API service decoration
+ *
+ *             To run this file:
+ *             1. Install tsx globally: npm install -g tsx
+ *             2. Execute directly: tsx day02_decorators.ts
+ *             (tsx is recommended as it's faster and more modern than ts-node)
+ */
+
 // decorators.ts
 
 // Logging decorator
