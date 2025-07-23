@@ -3,7 +3,7 @@
  *
  * Author:  Peile Wu
  * Email:   peile.wu.1990@gmail.com
- * Date:    2025/7/21
+ * Date:    2025/7/23
  * Purpose: Learning TypeScript decorators for method enhancement and monitoring,
  *          to gain competence for blockchain development positions.
  *
@@ -19,7 +19,7 @@
  *
  *             To run this file:
  *             1. Install tsx globally: npm install -g tsx
- *             2. Execute directly: tsx day02_decorators.ts
+ *             2. Execute directly: npx tsx .\day02_decorators.ts
  *             (tsx is recommended as it's faster and more modern than ts-node)
  */
 

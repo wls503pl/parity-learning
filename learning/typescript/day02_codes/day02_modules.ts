@@ -1,3 +1,28 @@
+/**
+ * TypeScript Module System and Blockchain Utilities
+ *
+ * Author:  Peile Wu
+ * Email:   peile.wu.1990@gmail.com
+ * Date:    2025/7/23
+ * Purpose: Learning TypeScript module exports, imports, and namespace organization,
+ *          to gain competence for blockchain development positions.
+ *
+ * Day 02:  Covers type definitions, interface exports, class modules, utility classes,
+ *          namespace organization, and blockchain-specific data structures with
+ *          comprehensive validation logic.
+ *
+ * Additional: This file serves as a comprehensive module library including:
+ *             - Blockchain type definitions (BlockStatus, NetworkType)
+ *             - Block interface and validation classes
+ *             - Utility functions for hash calculation and timestamps
+ *             - Namespace organization for transaction utilities
+ *
+ *             To use this module:
+ *             1. Import specific exports: import { Block, BlockValidator } from "./day02_modules.js"
+ *             2. Run tests with: npx tsx .\day02_modules_test.ts
+ *             (This file is designed to be imported by other modules)
+ */
+
 // day02_modules.ts
 // Learning objectives: TypeScript module system and namespaces
 
@@ -17,7 +42,7 @@ export class BlockValidator {
   static validate(block: Block): boolean {
     // Check if hash exists and is a string
     if (!block.hash || typeof block.hash !== "string") {
-      console.log("❌ Verification failed: invalid hash.");
+      console.log("❌ Verification failed: Invalid hash.");
       return false;
     }
 
