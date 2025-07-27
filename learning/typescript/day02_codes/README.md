@@ -200,6 +200,8 @@ PS E:\parity-learning\learning\typescript\day02_codes> npx tsx day02_decorators.
 }
 ```
 
+![decorator_result](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/typescript/day02_codes/img/decorator_test.png)
+
 The decorator system successfully:
 - Logged method calls with parameters
 - Measured execution time (730.63ms for GitHub API call)
@@ -249,6 +251,8 @@ Invalid transaction data: { from: 'Alice', to: 'Alice', amount: -50, timestamp: 
 Invalid transaction verification result: ❌ Invalid
 ```
 
+![modules_test1-5](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/typescript/day02_codes/img/modules_test1-5.png)
+
 #### Blockchain Simulation Results:
 ```bash
 === Test 6: Simple blockchain simulation ===
@@ -284,6 +288,8 @@ Block 3:
 
 🎉 All tests completed! Successfully learned the TypeScript module system!
 ```
+
+![module_test6](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/typescript/day02_codes/img/module_test6.png)
 
 ## Part 2: Technical Implementation Details
 
