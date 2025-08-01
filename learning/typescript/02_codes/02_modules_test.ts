@@ -105,7 +105,7 @@ testData.forEach((data, index) => {
 });
 console.log();
 
-// Test 5: Namespace usage=
+// Test 5: Namespace usage
 console.log("=== Test 5: Namespace functionality ===");
 const transaction: BlockchainUtils.Transaction = {
   from: "Alice",
