@@ -251,6 +251,7 @@ test("Block Validation - Invalid State", () => {
  * All tests above will be executed when this file is imported or run
  */
 console.log("🚀 Starting to run union type tests...\n");
+// runAllUnionTypesTests();
 
 /**
  * Export function for programmatic test execution

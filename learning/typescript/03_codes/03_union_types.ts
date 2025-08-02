@@ -21,11 +21,6 @@
  * 3. Type Guards: Functions that help TypeScript narrow types at runtime
  * 4. Discriminated Unions: Union types with a common discriminant property
  * 5. Generic Union Types: Flexible type definitions using generics
- *
- * File Structure:
- * - Type Definitions (lines 31-60)
- * - Utility Functions (lines 62-140)
- * - Sample Data (lines 142-158)
  */
 
 // 1. Blockchain State Union Type

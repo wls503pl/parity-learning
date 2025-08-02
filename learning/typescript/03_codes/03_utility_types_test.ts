@@ -14,7 +14,7 @@ import {
   UserUpdate,
   BlockSummary,
   PublicUser,
-} from "./day03_utility_types";
+} from "./03_utility_types";
 
 // 简单的测试框架
 function test(name: string, fn: () => void) {

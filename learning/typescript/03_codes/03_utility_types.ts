@@ -54,14 +54,11 @@ export type UserRegistration = Pick<User, "name" | "email" | "password"> & {
 export type UserLogin = Pick<User, "email" | "password">;
 
 // 11. 用户更新函数
-export function updateUser(
-  currentUser: User,
-  updates: UserUpdate
-): User {
+export function updateUser(currentUser: User, updates: UserUpdate): User {
   return {
     ...currentUser,
     ...updates,
-    updatedAt: new Date()
+    updatedAt: new Date(),
   };
 }
 
@@ -81,13 +78,14 @@ export function getPublicUserInfo(user: User): PublicUser {
 export const rolePermissions: UserRolePermissions = {
   admin: ["read", "write", "delete", "manage_users", "system_config"],
   user: ["read", "write"],
-  guest: ["read"]
+  guest: ["read"],
 };
 
 // 15. 验证用户注册数据
-export function validateUserRegistration(
-  registration: UserRegistration
-): { valid: boolean; errors: string[] } {
+export function validateUserRegistration(registration: UserRegistration): {
+  valid: boolean;
+  errors: string[];
+} {
   const errors: string[] = [];
 
   if (!registration.name || registration.name.length < 2) {
@@ -108,7 +106,7 @@ export function validateUserRegistration(
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -117,32 +115,30 @@ export function processUserLogin(
   users: User[],
   loginData: UserLogin
 ): { success: boolean; user?: PublicUser; message: string } {
-  const user = users.find(u => 
-    u.email === loginData.email && 
-    u.password === loginData.password &&
-    u.isActive
+  const user = users.find(
+    (u) =>
+      u.email === loginData.email &&
+      u.password === loginData.password &&
+      u.isActive
   );
 
   if (!user) {
     return {
       success: false,
-      message: "邮箱或密码错误，或账户已被禁用"
+      message: "邮箱或密码错误，或账户已被禁用",
     };
   }
 
   return {
     success: true,
     user: getPublicUserInfo(user),
-    message: "登录成功"
+    message: "登录成功",
   };
 }
 
 // 17. 批量更新用户
-export function batchUpdateUsers(
-  users: User[],
-  updates: UserUpdate
-): User[] {
-  return users.map(user => updateUser(user, updates));
+export function batchUpdateUsers(users: User[], updates: UserUpdate): User[] {
+  return users.map((user) => updateUser(user, updates));
 }
 
 // 18. 根据角色筛选用户
@@ -150,7 +146,7 @@ export function filterUsersByRole<T extends User["role"]>(
   users: User[],
   role: T
 ): User[] {
-  return users.filter(user => user.role === role);
+  return users.filter((user) => user.role === role);
 }
 
 // 19. 示例数据
@@ -163,7 +159,7 @@ export const sampleUser: User = {
   role: "admin",
   createdAt: new Date("2025-01-01"),
   updatedAt: new Date("2025-07-29"),
-  isActive: true
+  isActive: true,
 };
 
 export const sampleBlock: Block = {
@@ -175,7 +171,7 @@ export const sampleBlock: Block = {
   miner: "miner_001",
   nonce: 12345,
   difficulty: 4,
-  status: "confirmed"
+  status: "confirmed",
 };
 
 // 20. 工具类型使用示例
@@ -183,7 +179,7 @@ export const examples = {
   // Partial 示例
   userUpdate: {
     name: "新名字",
-    age: 26
+    age: 26,
   } as UserUpdate,
 
   // Pick 示例
@@ -191,7 +187,7 @@ export const examples = {
     id: "block_001",
     hash: "0x1234567890abcdef",
     timestamp: Date.now(),
-    status: "confirmed"
+    status: "confirmed",
   } as BlockSummary,
 
   // Omit 示例
@@ -202,6 +198,6 @@ export const examples = {
     role: "admin",
     createdAt: new Date(),
     updatedAt: new Date(),
-    isActive: true
-  } as PublicUser
+    isActive: true,
+  } as PublicUser,
 };
