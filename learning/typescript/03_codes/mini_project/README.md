@@ -127,7 +127,7 @@ export const rolePermissions: Record<UserRole, string[]> = {
 
 ### Mini Project Testing Results:
 
-![03_mini_project_testResult]()
+![03_mini_project_testResult](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/typescript/03_codes/img/03_mini_project_testResult.png)
 
 ### Key Success Indicators:
 
