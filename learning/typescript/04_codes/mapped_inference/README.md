@@ -200,6 +200,7 @@ type ProcessedConfig = TransformConfig<RawSubstrateConfig>;
 ### Test Categories:
 
 #### 1. Basic Mapped Types Tests
+
 ```typescript
 // Modifier transformations
 interface TestInterface {
@@ -212,12 +213,13 @@ interface TestInterface {
 type ReadonlyTest = ReadonlyVersion<{ name: string; age: number }>;
 // Result: { readonly name: string; readonly age: number } ✅
 
-// RequiredVersion test  
+// RequiredVersion test
 type RequiredTest = RequiredVersion<{ name?: string; age?: number }>;
 // Result: { name: string; age: number } ✅
 ```
 
 #### 2. Key Remapping Tests
+
 ```typescript
 // Getter methods generation
 type GetterTest = GetterMethods<{ name: string; age: number }>;
@@ -232,6 +234,7 @@ type EventTest = SubstrateEventHandlers<{
 ```
 
 #### 3. Type Inference Tests
+
 ```typescript
 // Function parameter extraction
 type ParamsTest = FunctionParams<(a: string, b: number) => void>;
@@ -254,6 +257,7 @@ type NestedTest = ExtractNestedType<
 ### Core Mapped Type Patterns
 
 #### 1. Property Transformation
+
 ```typescript
 // Transform property names and types simultaneously
 type APIMethodMapping<T> = {
@@ -271,6 +275,7 @@ type APITest = APIMethodMapping<{
 ```
 
 #### 2. Conditional Property Filtering
+
 ```typescript
 // Extract only function properties
 type FunctionPropertyNames<T> = {
@@ -291,6 +296,7 @@ type OnlyMethods = FunctionProperties<TestAPI>;
 ```
 
 #### 3. Deep Object Transformations
+
 ```typescript
 // Recursive transformation with conditions
 type DeepTransform<T, U> = {
@@ -309,16 +315,19 @@ type DeepTransform<T, U> = {
 ### Advanced Inference Patterns
 
 #### 1. Multi-Level Type Extraction
+
 ```typescript
 // Navigate through nested object structures
-type ExtractNestedType<T, Path extends string> =
-  Path extends `${infer Key}.${infer Rest}`
-    ? Key extends keyof T
-      ? ExtractNestedType<T[Key], Rest>
-      : never
-    : Path extends keyof T
-    ? T[Path]
-    : never;
+type ExtractNestedType<
+  T,
+  Path extends string
+> = Path extends `${infer Key}.${infer Rest}`
+  ? Key extends keyof T
+    ? ExtractNestedType<T[Key], Rest>
+    : never
+  : Path extends keyof T
+  ? T[Path]
+  : never;
 
 // Example usage
 interface ComplexResponse {
@@ -329,11 +338,15 @@ interface ComplexResponse {
   };
 }
 
-type BlockNumber = ExtractNestedType<ComplexResponse, "result.block.header.number">;
+type BlockNumber = ExtractNestedType<
+  ComplexResponse,
+  "result.block.header.number"
+>;
 // Result: string
 ```
 
 #### 2. Conditional Type Extraction
+
 ```typescript
 // Smart extraction with multiple constraints
 type SmartExtract<T, Condition> = T extends any[]
@@ -348,6 +361,7 @@ type SmartExtract<T, Condition> = T extends any[]
 ```
 
 #### 3. String Pattern Parsing
+
 ```typescript
 // Parse structured string data
 type ParseEventData<T extends string> =
@@ -366,6 +380,7 @@ type ParsedEvent = ParseEventData<"BlockFinalized:hash=0x123,number=100">;
 ## Part 5: Practical Exercise Solutions
 
 ### 1. Configuration Builder Pattern
+
 ```typescript
 type ConfigBuilder<T> = {
   [K in keyof T as `set${Capitalize<string & K>}`]: (
@@ -387,6 +402,7 @@ type Builder = ConfigBuilder<DatabaseConfig>;
 ```
 
 ### 2. Validation Rules Generation
+
 ```typescript
 type ValidationRules<T> = {
   [K in keyof T]-?: T[K] extends string
@@ -402,6 +418,7 @@ type ValidationRules<T> = {
 ```
 
 ### 3. Type-Safe Extrinsic Builder
+
 ```typescript
 type ExtrinsicBuilder<Modules extends Record<string, Record<string, any>>> = {
   [Module in keyof Modules]: {
@@ -450,19 +467,19 @@ tsx 04_mapped_inference_test.ts
 
 ✅ Basic mapped type transformations validated at compile time
 ✅ Getter methods: { nameType: 'function', ageType: 'function' }
-✅ Event handlers registered: { 
-  blockFinalizedHandler: 'function', 
-  newBlockHandler: 'function' 
+✅ Event handlers registered: {
+  blockFinalizedHandler: 'function',
+  newBlockHandler: 'function'
 }
-✅ API wrapper response: { 
-  success: true, 
-  hasData: true, 
-  hasTimestamp: true 
+✅ API wrapper response: {
+  success: true,
+  hasData: true,
+  hasTimestamp: true
 }
-✅ Config builder result: { 
-  host: 'localhost', 
-  port: 5432, 
-  database: 'testdb' 
+✅ Config builder result: {
+  host: 'localhost',
+  port: 5432,
+  database: 'testdb'
 }
 
 ✅ All demos completed successfully!
@@ -538,9 +555,3 @@ tsx 04_mapped_inference_test.ts
 - **State Management** - Type-safe state transformation systems
 - **Middleware Pipelines** - Request/response transformation typing
 - **Testing Frameworks** - Mock generation and type validation
-
----
-
-_This documentation covers the Mapped Types & Advanced Inference module of the TypeScript learning journey,
-demonstrating mastery of TypeScript's most sophisticated object transformation and type extraction capabilities through practical Substrate blockchain development scenarios with comprehensive type safety,
-performance optimization, and real-world integration patterns._

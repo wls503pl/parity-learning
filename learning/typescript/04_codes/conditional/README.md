@@ -381,7 +381,3 @@ type SafeAccess<T, K extends keyof T> = T extends Record<K, infer U>
 - **Framework Integration** - Type-safe plugin systems
 - **Configuration Validation** - Compile-time config checking
 - **Performance Optimization** - Zero-runtime type utilities
-
----
-
-_This documentation covers the Conditional Types module of the TypeScript learning journey, demonstrating mastery of TypeScript's most advanced type-level programming features through practical Substrate blockchain development scenarios with comprehensive type safety, performance optimization, and real-world integration patterns._
