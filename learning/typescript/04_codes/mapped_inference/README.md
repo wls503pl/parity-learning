@@ -183,7 +183,7 @@ type ProcessedConfig = TransformConfig<RawSubstrateConfig>;
 
 ### Test Suite Overview (`04_mapped_inference_test.ts`)
 
-![Mapped Types Test Results](test_results_mapped_inference.png)
+![Mapped Types Test Results](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/typescript/04_codes/img/04_mapped_inference_testResults.png)
 
 **Test Coverage:**
 

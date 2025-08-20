@@ -99,7 +99,9 @@ type EventSystem<T extends Record<string, any>> = {
 
 ### Test Suite Overview (`04_template_literals_tests.ts`)
 
-![Template Literals Test Results](test_results_template_literals.png)
+![Template Literals Test Results1-2](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/typescript/04_codes/img/04_template_literals_testResult1_2.png)
+![Template Literals Test Results3-4](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/typescript/04_codes/img/04_template_literals_testResult3_4.png)
+![Template Literals Test Results5](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/typescript/04_codes/img/04_template_literals_testResult_5.png)
 
 **Test Coverage:**
 
@@ -114,6 +116,7 @@ type EventSystem<T extends Record<string, any>> = {
 ### Test Categories:
 
 #### 1. Basic Template Literal Tests
+
 ```typescript
 // Greeting generation
 "World" → "Hello, World!" ✅
@@ -125,6 +128,7 @@ type EventSystem<T extends Record<string, any>> = {
 ```
 
 #### 2. String Transformation Tests
+
 ```typescript
 // CamelCase to snake_case
 "userName" → "user_name" ✅
@@ -139,17 +143,19 @@ type EventSystem<T extends Record<string, any>> = {
 ```
 
 #### 3. Substrate String Parsing Tests
+
 ```typescript
 // Pallet call parsing
 "Balances::transfer" → Pallet: "Balances", Method: "transfer" ✅
 "System::remark" → Pallet: "System", Method: "remark" ✅
 
 // Event signature parsing
-"Transfer(AccountId,AccountId,Balance)" → 
+"Transfer(AccountId,AccountId,Balance)" →
   Event: "Transfer", Params: ["AccountId", "AccountId", "Balance"] ✅
 ```
 
 #### 4. Event System Tests
+
 ```typescript
 // Handler name generation
 "transfer" → "handleTransfer" ✅
@@ -161,6 +167,7 @@ type EventSystem<T extends Record<string, any>> = {
 ```
 
 #### 5. Validation Tests
+
 ```typescript
 // RPC method validation
 "chain_getBlock" → Valid ✅
@@ -176,15 +183,19 @@ type EventSystem<T extends Record<string, any>> = {
 ### Core Template Literal Patterns
 
 #### 1. Basic String Construction
+
 ```typescript
 // Simple template combination
-type APIPath<Version extends string, Endpoint extends string> = 
-  `/api/${Version}/${Endpoint}`;
+type APIPath<
+  Version extends string,
+  Endpoint extends string
+> = `/api/${Version}/${Endpoint}`;
 
 type V1Users = APIPath<"v1", "users">; // "/api/v1/users"
 ```
 
 #### 2. Recursive String Processing
+
 ```typescript
 // Convert camelCase to snake_case recursively
 type CamelToSnakeCase<S extends string> =
@@ -196,6 +207,7 @@ type CamelToSnakeCase<S extends string> =
 ```
 
 #### 3. Advanced Pattern Matching
+
 ```typescript
 // Extract URL parameters
 type ExtractRouteParams<T extends string> =
@@ -212,6 +224,7 @@ type UserParams = ExtractRouteParams<"/users/:userId/posts/:postId">;
 ### Substrate Blockchain Applications
 
 #### 1. Type-Safe RPC Method Construction
+
 ```typescript
 type SubstrateRPCMethods = {
   chain: ["getBlock", "getHeader", "getFinalizedHead"];
@@ -225,6 +238,7 @@ type IsValidRPCMethod<T extends string> = T extends `${string}_${string}`
 ```
 
 #### 2. Event Handler Generation
+
 ```typescript
 interface SubstrateEvents {
   transfer: { from: string; to: string; amount: bigint };
@@ -239,6 +253,7 @@ type Handlers = EventSystem<SubstrateEvents>;
 ```
 
 #### 3. Storage Path Validation
+
 ```typescript
 type StorageKeyPath<T> = T extends Record<string, any>
   ? {
@@ -293,10 +308,9 @@ type Welcome<Name extends string> = `Welcome, ${Name}!`;
 type ToSnakeCase<T extends string> = CamelToSnakeCase<T>;
 
 // Advanced: Pattern parsing
-type ParseMethod<T extends string> = 
-  T extends `${infer Module}_${infer Method}`
-    ? { module: Module; method: Method }
-    : never;
+type ParseMethod<T extends string> = T extends `${infer Module}_${infer Method}`
+  ? { module: Module; method: Method }
+  : never;
 
 // Expert: Recursive transformation
 type DeepPathExtraction<T, Path extends string = ""> = {
@@ -407,11 +421,13 @@ Date: Aug 18, 2025
 
 ```typescript
 // Create domain-specific string validators
-type IsValidEmail<T extends string> = 
-  T extends `${string}@${string}.${string}` ? true : false;
+type IsValidEmail<T extends string> = T extends `${string}@${string}.${string}`
+  ? true
+  : false;
 
-type IsValidURL<T extends string> = 
-  T extends `http${"s" | ""}://${string}` ? true : false;
+type IsValidURL<T extends string> = T extends `http${"s" | ""}://${string}`
+  ? true
+  : false;
 
 // Build complex string transformations
 type CreateAPIEndpoint<
@@ -425,14 +441,18 @@ type CreateAPIEndpoint<
 
 ```typescript
 // REST API path construction
-type RESTEndpoint<Resource extends string, ID extends string = ""> = 
-  ID extends "" 
-    ? `/api/v1/${Lowercase<Resource>}` 
-    : `/api/v1/${Lowercase<Resource>}/${ID}`;
+type RESTEndpoint<
+  Resource extends string,
+  ID extends string = ""
+> = ID extends ""
+  ? `/api/v1/${Lowercase<Resource>}`
+  : `/api/v1/${Lowercase<Resource>}/${ID}`;
 
 // Event naming convention
-type EventName<Domain extends string, Action extends string> = 
-  `${Lowercase<Domain>}:${Lowercase<Action>}`;
+type EventName<
+  Domain extends string,
+  Action extends string
+> = `${Lowercase<Domain>}:${Lowercase<Action>}`;
 ```
 
 ## Real-World Applications
@@ -474,11 +494,13 @@ interface SubstrateAPI {
 }
 
 // Type-safe storage queries
-type StorageQuery<Pallet extends string, Item extends string> = 
-  `${Pallet}.${Item}`;
+type StorageQuery<
+  Pallet extends string,
+  Item extends string
+> = `${Pallet}.${Item}`;
 
 // Event subscription system
-type EventSubscription<T extends keyof SubstrateEvents> = 
+type EventSubscription<T extends keyof SubstrateEvents> =
   `subscribe${Capitalize<T>}`;
 ```
 
@@ -491,6 +513,8 @@ type ComponentProps<T extends string> = {
 };
 
 // CSS class name generation
-type ClassName<Base extends string, Modifier extends string> = 
-  `${Base}--${Modifier}`;
+type ClassName<
+  Base extends string,
+  Modifier extends string
+> = `${Base}--${Modifier}`;
 ```

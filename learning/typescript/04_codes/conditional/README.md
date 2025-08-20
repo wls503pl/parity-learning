@@ -99,7 +99,7 @@ type BalanceOperation<T> = T extends "transfer"
 
 ### Basic Types Testing (`04_conditional_basic_test.ts`)
 
-![Basic Test Results](test_results_basic.png)
+![Basic Test Results](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/typescript/04_codes/img/04_conditional_basic_testResults.png)
 
 **Test Coverage:**
 
@@ -112,7 +112,7 @@ type BalanceOperation<T> = T extends "transfer"
 
 ### Advanced Types Testing (`04_conditional_advanced_test.ts`)
 
-![Advanced Test Results](test_results_advanced.png)
+![Advanced Test Results](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/typescript/04_codes/img/04_conditional_advanced_testResults.png)
 
 **Advanced Test Coverage:**
 
