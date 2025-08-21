@@ -1,5 +1,5 @@
 /**
- * TypeScript Advanced Type Inference + Mapped Types - Part 4
+ * TypeScript Advanced Type Inference + Mapped Types
  * Focus: Mapped types, key remapping, and complex type inference patterns
  *
  * Author: Peile Wu
@@ -25,7 +25,7 @@
  */
 
 // =============================================================================
-// PART 1: FUNDAMENTAL MAPPED TYPES (30 minutes)
+// PART 1: FUNDAMENTAL MAPPED TYPES
 // =============================================================================
 
 // Basic mapped type syntax
@@ -62,7 +62,7 @@ type MutableConfig = MutableVersion<SubstrateConfig>;
 type RequiredConfig = RequiredVersion<SubstrateConfig>;
 
 // =============================================================================
-// PART 2: KEY REMAPPING IN MAPPED TYPES (45 minutes)
+// PART 2: KEY REMAPPING IN MAPPED TYPES
 // =============================================================================
 
 // Basic key remapping with 'as' clause
@@ -102,7 +102,7 @@ type ChainMethods = FunctionProperties<ChainAPI>;
 type ChainGetters = GetterMethods<Pick<ChainAPI, "metadata" | "version">>;
 
 // =============================================================================
-// PART 3: ADVANCED TYPE INFERENCE WITH INFER (60 minutes)
+// PART 3: ADVANCED TYPE INFERENCE WITH INFER
 // =============================================================================
 
 // Function parameter inference
@@ -149,7 +149,7 @@ type DeepExtract<T, K extends PropertyKey> = T extends Record<PropertyKey, any>
   : never;
 
 // =============================================================================
-// PART 4: SUBSTRATE-SPECIFIC MAPPED TYPE PATTERNS (75 minutes)
+// PART 4: SUBSTRATE-SPECIFIC MAPPED TYPE PATTERNS
 // =============================================================================
 
 // Substrate RPC methods type mapping
@@ -215,7 +215,7 @@ type CamelCase<S extends string> = S extends `${infer P}_${infer Q}`
 type ProcessedConfig = TransformConfig<RawSubstrateConfig>;
 
 // =============================================================================
-// PART 5: COMPLEX TYPE TRANSFORMATIONS (90 minutes)
+// PART 5: COMPLEX TYPE TRANSFORMATIONS
 // =============================================================================
 
 // Deep transformation with conditional mapping
@@ -276,7 +276,7 @@ type APIResponseWrapper<T extends Record<string, any>> = {
 type WrappedSubstrateClient = APIResponseWrapper<SubstrateClient>;
 
 // =============================================================================
-// PART 6: ADVANCED INFERENCE PATTERNS (60 minutes)
+// PART 6: ADVANCED INFERENCE PATTERNS
 // =============================================================================
 
 // Multi-level inference for complex data structures
@@ -350,7 +350,7 @@ type ParseKeyValuePairs<T extends string> =
     : {};
 
 // =============================================================================
-// PART 7: PRACTICAL EXERCISES & TESTING (60 minutes)
+// PART 7: PRACTICAL EXERCISES & TESTING
 // =============================================================================
 
 // Exercise 1: Build a type-safe configuration system
@@ -440,7 +440,7 @@ type TestExtrinsicBuilder = ExtrinsicBuilder<SubstrateModules>;
  * ✅ Able to build flexible type transformation systems
  * ✅ Apply mapped types to Substrate-specific use cases
  *
- * 🎯 NEXT: Day 5 - Comprehensive Substrate API Type System Project
+ * 🎯 NEXT: Comprehensive Substrate API Type System Project
  * 📚 FOCUS: Integration of all learned concepts into real-world project
  *
  * 💡 KEY TAKEAWAYS:

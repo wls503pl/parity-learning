@@ -79,7 +79,7 @@ type AssertAssignable<T, U> = T extends U ? true : false;
 type TestResult<T extends boolean> = T extends true ? "✅ PASS" : "❌ FAIL";
 
 // =============================================================================
-// PART 1: BASIC MAPPED TYPES TESTS (30 minutes)
+// PART 1: BASIC MAPPED TYPES TESTS
 // =============================================================================
 
 interface TestInterface {
@@ -142,7 +142,7 @@ type MutableConfigTest = AssertEqual<
 const mutableConfigResult: TestResult<MutableConfigTest> = "✅ PASS";
 
 // =============================================================================
-// PART 2: KEY REMAPPING TESTS (45 minutes)
+// PART 2: KEY REMAPPING TESTS
 // =============================================================================
 
 // Test GetterMethods transformation
@@ -202,7 +202,7 @@ type FunctionPropsValidation = AssertEqual<
 const functionPropsResult: TestResult<FunctionPropsValidation> = "✅ PASS";
 
 // =============================================================================
-// PART 3: TYPE INFERENCE TESTS (60 minutes)
+// PART 3: TYPE INFERENCE TESTS
 // =============================================================================
 
 // Test FunctionParams inference
@@ -263,7 +263,7 @@ type DeepExtractValidation = AssertEqual<DeepExtractTest, string>;
 const deepExtractResult: TestResult<DeepExtractValidation> = "✅ PASS";
 
 // =============================================================================
-// PART 4: SUBSTRATE-SPECIFIC TRANSFORMATIONS (75 minutes)
+// PART 4: SUBSTRATE-SPECIFIC TRANSFORMATIONS
 // =============================================================================
 
 // Test RPCToClientMethods transformation
@@ -313,7 +313,7 @@ type ConfigTransformTest = TransformConfig<TestRawConfig>;
 const configTransformExists: boolean = true;
 
 // =============================================================================
-// PART 5: ADVANCED TRANSFORMATIONS (90 minutes)
+// PART 5: ADVANCED TRANSFORMATIONS
 // =============================================================================
 
 // Test DeepTransform with uppercase transformation
@@ -353,7 +353,7 @@ type WrappedAPIValidation = AssertAssignable<
 const wrappedAPIResult: TestResult<WrappedAPIValidation> = "✅ PASS";
 
 // =============================================================================
-// PART 6: COMPLEX INFERENCE PATTERNS (60 minutes)
+// PART 6: COMPLEX INFERENCE PATTERNS
 // =============================================================================
 
 // Test ExtractNestedType path navigation
@@ -384,7 +384,7 @@ type ParseValidation = AssertAssignable<
 const parseResult: TestResult<ParseValidation> = "✅ PASS";
 
 // =============================================================================
-// PART 7: EXERCISE IMPLEMENTATIONS & TESTS (60 minutes)
+// PART 7: EXERCISE IMPLEMENTATIONS & TESTS
 // =============================================================================
 
 // Test ConfigBuilder implementation
