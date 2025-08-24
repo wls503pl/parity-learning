@@ -4,7 +4,7 @@
  *
  * Author: Peile Wu
  * Contact: peile.wu.1990@gmail.com
- * Date: Aug 22, 2025
+ * Date: Aug 24, 2025
  *
  * Learning Focus:
  * - Complete Substrate API type definition system
@@ -162,8 +162,8 @@ interface StateRPCMethods {
   state_getKeysPagedAt: (
     prefix: string,
     count: number,
-    startKey?: string,
-    at: BlockHash
+    at: BlockHash,
+    startKey?: string
   ) => Promise<string[]>;
   state_getChildKeys: (
     childStorageKey: string,
@@ -733,21 +733,21 @@ interface ExtendedSubstrateClient extends SubstrateAPIClient {
 // =============================================================================
 
 /**
- * ðŸŽ¯ COMPREHENSIVE PROJECT VALIDATION CHECKLIST
+ * 🎯 COMPREHENSIVE PROJECT VALIDATION CHECKLIST
  * ============================================
  *
- * âœ… Type-safe RPC Calls: Complete Substrate RPC method coverage
- * âœ… Automatic Response Type Inference: All return types properly inferred
- * âœ… Compile-time Method Validation: Snake_case to camelCase transformation
- * âœ… Flexible Error Handling: Comprehensive APIResponse wrapper system
- * âœ… Event System Integration: Type-safe event subscription and handling
- * âœ… Configuration Management: Advanced config transformation and validation
- * âœ… Query Builder Pattern: Fluent API for complex queries
- * âœ… Metadata Processing: Runtime metadata parsing and type extraction
- * âœ… Performance Optimization: Efficient type computations
- * âœ… Real-world Integration: Ready for substrate-api-sidecar usage
+ * ✅ Type-safe RPC Calls: Complete Substrate RPC method coverage
+ * ✅ Automatic Response Type Inference: All return types properly inferred
+ * ✅ Compile-time Method Validation: Snake_case to camelCase transformation
+ * ✅ Flexible Error Handling: Comprehensive APIResponse wrapper system
+ * ✅ Event System Integration: Type-safe event subscription and handling
+ * ✅ Configuration Management: Advanced config transformation and validation
+ * ✅ Query Builder Pattern: Fluent API for complex queries
+ * ✅ Metadata Processing: Runtime metadata parsing and type extraction
+ * ✅ Performance Optimization: Efficient type computations
+ * ✅ Real-world Integration: Ready for substrate-api-sidecar usage
  *
- * ðŸš€ ADVANCED FEATURES IMPLEMENTED:
+ * 🚀 ADVANCED FEATURES IMPLEMENTED:
  * - Deep type transformations with performance considerations
  * - Complex conditional type logic for method mapping
  * - Template literal types for method name generation
@@ -756,7 +756,7 @@ interface ExtendedSubstrateClient extends SubstrateAPIClient {
  * - Plugin and middleware system architecture
  * - Comprehensive error handling and response wrapping
  *
- * ðŸ'¡ PARITY POSITION ALIGNMENT:
+ * 💡 PARITY POSITION ALIGNMENT:
  * - substrate-api-sidecar compatible type definitions
  * - Production-ready error handling patterns
  * - Performance-aware type system design
