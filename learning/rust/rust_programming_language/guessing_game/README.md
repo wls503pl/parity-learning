@@ -91,7 +91,7 @@ cargo build
 
 ### Expected Output:
 
-![Game Execution Result]([../img/guessing_game.png](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/rust/rust_programming_language/guessing_game/img/guessing_game.png))
+![Game Execution Result](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/rust/rust_programming_language/guessing_game/img/guessing_game.png)
 
 ```
 Guess a number:
