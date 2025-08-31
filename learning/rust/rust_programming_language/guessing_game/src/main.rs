@@ -2,6 +2,7 @@
 // The Rng trait defines some of the methods that a random number generator needs to implement.
 use rand::Rng;
 
+use std::cmp::Ordering; // Ordering is an enumeration type, which has 3 values {Less, Greater, Equal}
 use std::io; // prelude
 
 fn main() {
@@ -22,4 +23,27 @@ fn main() {
                                                                   // if Ok, expect will extract the value appended to OK and return it to User)
     println!("The number you guess is: {}", guess); // {} is a placeholder, it will be replaced to the parameter after comma, .e.g ("{}{},para1,para2);
     println!("The secret number is: {}.", secret_number);
+
+    // notice secret_number's type, 'guess' is a string
+
+    /*
+     * Here, Rust allows new variables with the same name by using 'shadow' feature
+     * In the case of type conversion, the new variable hides the old variable with the same name
+     * The 'guess' on the right side of the '=' is the previous guess: String::new()
+     * pub fn trim(&self) -> &str; trim() function remove spaces at both ends of string, cause the User presses 'Enter' when entering, this is a blank(\n)
+     * pub fn parse<F: FromStr>(&self) -> Result<F, F::Err>; parses a string into an integer, it may fail, here we also use 'expect()' to handle
+     * 'parse()' can parse a string into a certain numeric type, which may be i32, u32, i64, etc., so you need to indicate the type you want to parse after guess
+     */
+    let guess: u32 = guess.trim().parse().expect("Please type a number!");
+
+    /*
+     * The type of secret_number is originally i32 when it is declared. When it is compared with guess (specified as u32),
+     * it is implicitly converted to u32.
+     */
+    match guess.cmp(&secret_number) {
+        // cmp's return type is Ordering, using match to consider what to do next according to cmp's return value.
+        Ordering::Less => println!("Too small!"), // This is called 'arm', if cmp's return value matchs one of below arms, it will exec "=> sentence"
+        Ordering::Greater => println!("Too big!"),
+        Ordering::Equal => println!("You get it!"),
+    }
 }
