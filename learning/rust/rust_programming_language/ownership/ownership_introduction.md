@@ -1,4 +1,4 @@
-# Rust Ownership: A Clear Guide
+# Rust Ownership: A Complete Guide
 
 ## What is Ownership?
 
@@ -65,17 +65,17 @@ The actual string content lives on the **heap**.
 
 ```
 Stack (s1):              Heap:
-┌──────────┬───────┐     ┌───────┬───────┐
-│   ptr    │   ●───┼────▶│   0   │   h   │
-├──────────┼───────┤     ├───────┼───────┤
-│   len    │   5   │     │   1   │   e   │
-├──────────┼───────┤     ├───────┼───────┤
-│ capacity │   5   │     │   2   │   l   │
-└──────────┴───────┘     ├───────┼───────┤
-                         │   3   │   l   │
-                         ├───────┼───────┤
-                         │   4   │   o   │
-                         └───────┴───────┘
+┌──────────┬───────┐       ┌───────┬───────┐
+│   ptr    │   ●───┼─────▶│   0   │   h   │
+├──────────┼───────┤       ├───────┼───────┤
+│   len    │   5   │       │   1   │   e   │
+├──────────┼───────┤       ├───────┼───────┤
+│ capacity │   5   │       │   2   │   l   │
+└──────────┴───────┘       ├───────┼───────┤
+                           │   3   │   l   │
+                           ├───────┼───────┤
+                           │   4   │   o   │
+                           └───────┴───────┘
 ```
 
 ---
@@ -109,7 +109,7 @@ fn main() {
 }
 ```
 
-![Rust Move Error Example](./img/move_error.png)
+![move_error](./img/move_error.png)
 
 The error message clearly shows:
 
@@ -136,6 +136,56 @@ This means you always know the performance cost of your code just by looking at 
 
 ---
 
+## Deep Copying with Clone
+
+If you truly want to perform a **deep copy** of heap data (not just the stack metadata), you can use the `clone()` method:
+
+```rust
+fn main() {
+    let s1 = String::from("Hello");
+    let s2 = s1.clone();  // Deep copy: both stack and heap data
+
+    println!("s1:{}, s2:{}", s1, s2);  // Both s1 and s2 are valid
+}
+```
+
+![clone()](./img/clone.png)
+
+### Memory Layout After Clone
+
+When you use `clone()`, both the stack data and heap data are duplicated:
+
+```
+Stack (s1):              Heap:
+┌──────────┬───────┐       ┌───────┬───────┐
+│   ptr    │   ●───┼─────▶│   0   │   h   │
+├──────────┼───────┤       ├───────┼───────┤
+│   len    │   5   │       │   1   │   e   │
+├──────────┼───────┤       ├───────┼───────┤
+│ capacity │   5   │       │   2   │   l   │
+└──────────┴───────┘       ├───────┼───────┤
+                           │   3   │   l   │
+Stack (s2):                ├───────┼───────┤
+┌──────────┬───────┐       │   4   │   o   │
+│   ptr    │   ●───┼─┐     └───────┴───────┘
+├──────────┼───────┤ │
+│   len    │   5   │ │     ┌───────┬───────┐
+├──────────┼───────┤ └───▶│   0   │   h   │
+│ capacity │   5   │       ├───────┼───────┤
+└──────────┴───────┘       │   1   │   e   │
+                           ├───────┼───────┤
+                           │   2   │   l   │
+                           ├───────┼───────┤
+                           │   3   │   l   │
+                           ├───────┼───────┤
+                           │   4   │   o   │
+                           └───────┴───────┘
+```
+
+**Key Point**: `clone()` is **explicit** and potentially **expensive**, so you'll always know when deep copying occurs.
+
+---
+
 ## Copy vs Move Behavior
 
 ### Types with Copy Trait
@@ -146,6 +196,26 @@ let y = x;  // x is still valid (Copy)
 ```
 
 Simple types like integers implement `Copy` trait and are actually duplicated.
+
+#### What is the Copy Trait?
+
+The `Copy` trait can be used for types that are stored entirely on the stack (like integers). If a type implements the `Copy` trait, the old variable remains usable after assignment.
+
+**Important Rule**: If a type or any part of it implements the `Drop` trait, Rust will not allow it to implement the `Copy` trait (this would cause a compile-time error).
+
+#### Types That Implement Copy
+
+Some types that have the `Copy` trait:
+
+- **All integer types**: `u32`, `i32`, etc.
+- **Boolean type**: `bool`
+- **Character type**: `char`
+- **All floating-point types**: `f64`, `f32`, etc.
+- **Tuples**: Only if all their fields are `Copy`
+  - `(u32, i32)` implements `Copy`
+  - `(u32, String)` does **NOT** implement `Copy`
+
+Any simple scalar combinations can be `Copy`. Any types that need to allocate memory or resources are **NOT** `Copy`.
 
 ### Types without Copy Trait
 
@@ -158,12 +228,23 @@ Complex types like `String` don't implement `Copy` and are moved instead.
 
 ---
 
+## Summary: Copy, Move, and Clone
+
+| Operation | When It Happens                | Performance           | Original Variable |
+| --------- | ------------------------------ | --------------------- | ----------------- |
+| **Copy**  | Automatic for `Copy` types     | Fast (stack only)     | Remains valid     |
+| **Move**  | Automatic for non-`Copy` types | Fast (stack only)     | Becomes invalid   |
+| **Clone** | Explicit call to `.clone()`    | Potentially expensive | Remains valid     |
+
+---
+
 ## Key Takeaways
 
 1. **Ownership prevents memory bugs** at compile time
 2. **Move semantics** ensure no hidden performance costs
 3. **One owner rule** eliminates data races and double-free errors
 4. **Explicit cloning** when you actually need deep copies
-5. **Zero runtime cost** - all checks happen at compile time
+5. **Copy trait** allows cheap duplication for stack-only types
+6. **Zero runtime cost** - all checks happen at compile time
 
 Understanding ownership means you rarely need to think about stack vs heap - the system handles memory safety automatically while maintaining performance.

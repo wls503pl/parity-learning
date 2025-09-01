@@ -4,3 +4,12 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+
+# Add this section to specify the binary target
+[[bin]]
+name = "move_error"
+path = "src/move_error.rs"
+
+[[bin]]
+name = "clone"
+path = "src/clone.rs"
