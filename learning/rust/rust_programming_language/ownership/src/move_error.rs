@@ -1,3 +1,7 @@
+/*
+ * Description:
+ * Create a function with an error to demonstrate ownership transfer
+ */
 fn main() {
     /*
      * Rust provides a second string type: 'String'
