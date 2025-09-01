@@ -21,3 +21,7 @@ path = "src/owner_func.rs"
 [[bin]]
 name = "owner_return"
 path = "src/owner_return.rs"
+
+[[bin]]
+name = "owner_reference"
+path = "src/owner_reference.rs"
