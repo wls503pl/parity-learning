@@ -25,3 +25,7 @@ path = "src/owner_return.rs"
 [[bin]]
 name = "owner_reference"
 path = "src/owner_reference.rs"
+
+[[bin]]
+name = "owner_slice"
+path = "src/owner_slice.rs"
