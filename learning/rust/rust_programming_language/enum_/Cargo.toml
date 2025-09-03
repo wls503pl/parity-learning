@@ -8,3 +8,7 @@ edition = "2024"
 [[bin]]
 name = "enum_define"
 path = "src/enum_define.rs"
+
+[[bin]]
+name = "enum_func"
+path = "src/enum_func.rs"
