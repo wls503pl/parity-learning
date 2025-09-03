@@ -1,0 +1,10 @@
+[package]
+name = "enum_"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+[[bin]]
+name = "enum_define"
+path = "src/enum_define.rs"
