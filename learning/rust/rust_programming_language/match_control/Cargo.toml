@@ -1,0 +1,10 @@
+[package]
+name = "match_control"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+[[bin]]
+name = "match_control"
+path = "src/match_control.rs"
