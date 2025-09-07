@@ -261,6 +261,84 @@ front_of_house::hosting::add_to_waitlist();
 
 Because `front_of_house` and `eat_at_restaurant` are both at the root level of this file, they can call each other.
 
+## Advanced Path Features
+
+### The super Keyword
+
+The `super` keyword is used to access content in the parent module path, similar to `..` in file systems.
+
+```rust
+fn serve_order() {}
+
+mod back_of_house {
+    fn fix_incorrect_order() {
+        cook_order();
+        super::serve_order(); // Using relative path to access parent module
+    }
+
+    fn cook_order() {}
+}
+```
+
+In this example, `super::serve_order()` calls the `serve_order()` function defined at the parent level.
+
+### pub struct
+
+When `pub` is placed before `struct`:
+
+- The struct itself becomes public
+- The struct's fields remain **private by default**
+- Each field needs to be individually marked with `pub` to become public
+
+```rust
+mod back_of_house {
+    pub struct Breakfast {
+        pub toast: String,        // Public field
+        seasonal_fruit: String,   // Private field
+    }
+
+    impl Breakfast {
+        pub fn summer(toast: &str) -> Breakfast {
+            Breakfast {
+                toast: String::from(toast),
+                seasonal_fruit: String::from("peaches"),
+            }
+        }
+    }
+}
+
+pub fn eat_at_restaurant() {
+    let mut meal = back_of_house::Breakfast::summer("Rye");
+    meal.toast = String::from("Wheat");
+    println!("I'd like {} toast please", meal.toast);
+
+    // meal.seasonal_fruit = String::from("blueberries"); // This would cause an error - private field
+}
+```
+
+### pub enum
+
+When `pub` is placed before `enum`:
+
+- The enum itself becomes public
+- **All enum variants are also public** (no need to add `pub` before each variant)
+
+```rust
+mod back_of_house {
+    pub enum Appetizer {
+        Soup,  // Public variant
+        Salad, // Public variant
+    }
+}
+
+pub fn eat_at_restaurant() {
+    let order1 = back_of_house::Appetizer::Soup;
+    let order2 = back_of_house::Appetizer::Salad;
+}
+```
+
+**Why enum variants are all public**: Enums are only useful when their variants are accessible. Unlike structs, where having some private fields doesn't prevent the struct from being useful, enums need their variants to be public to be meaningful. This follows Rust's principle of making the default behavior the most useful one.
+
 ## Module Tree Structure
 
 The module tree structure in this project is as follows:
