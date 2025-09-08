@@ -3,14 +3,7 @@
  * The 'use' keyword can be used to import a path into a scope.
  * Imported parts still follow privacy rules.
  */
-mod front_of_house {
-    pub mod hosting {
-        pub fn add_to_waitlist() {}
-        fn some_function() {}
-    }
-
-    pub mod hosting_2 {}
-}
+mod front_of_house;
 
 /*
  * After using 'use' like this, 'hosting' is available directly in the current scope,
