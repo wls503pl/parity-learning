@@ -386,6 +386,7 @@ use crate::config::Settings;
 
 - **Large codebases**: Organizing complex project dependencies
 - **Library development**: Clean public API design with re-exports
+- **Crate ecosystem integration**: Using external dependencies effectively
 - **Team collaboration**: Consistent import conventions across projects
 - **Performance optimization**: Reducing compilation time and memory usage
 
