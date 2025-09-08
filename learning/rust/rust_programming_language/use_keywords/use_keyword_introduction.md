@@ -34,6 +34,8 @@ mod front_of_house {
         pub fn add_to_waitlist() {}
         fn some_function() {}  // Private function
     }
+
+    pub mod hosting_2 {}  // Additional module for re-export demonstration
 }
 ```
 
@@ -42,6 +44,14 @@ mod front_of_house {
 ```rust
 // Absolute path import from crate root
 use crate::front_of_house::hosting;
+
+/*
+ * When a path (name) is imported into a scope using `use`, the name becomes private within that scope.
+ * 'pub use:' re-exports
+ * - Imports an entry into a scope
+ * - This entry can be imported by external code into their own scopes
+ */
+pub use crate::front_of_house::hosting_2;
 
 // Alternative: Relative path import
 // use front_of_house::hosting;
@@ -61,12 +71,35 @@ pub fn eat_at_restaurant() {
 - `use` statements respect privacy boundaries
 - Imported modules act as if defined in current scope
 - Private items remain inaccessible even after module import
+- **`pub use` re-exports**: Makes imported items available for external code to import
+- **Re-export pattern**: Allows creating clean public APIs by exposing internal modules
+
+#### **Privacy Boundary Enforcement - Compilation Demonstration**
+
+The following compilation output demonstrates how Rust enforces privacy rules even with `use` imports:
+
+**Successful Build with External Dependencies:**
+
+![add_dependency_rand](./src/add_dependency_rand.png)
+
+**Privacy Error Demonstration:**
+When attempting to call the private `some_function()`, Rust's compiler produces a clear error:
+
+![call_privateFunc](./src/call_privateFunc.png)
+
+**Analysis**:
+
+- **External dependency resolution**: Cargo automatically downloads and compiles dependencies like `rand v0.5.6`
+- **Privacy enforcement**: Even though `hosting` module is imported, private items remain inaccessible
+- **Clear error messages**: Rust provides specific error codes (E0603) and explanations
+- **Compilation safety**: Privacy violations are caught at compile time, not runtime
+- **Design rationale**: Protects internal implementation details while allowing controlled access
 
 ---
 
 ### **Example 2: Advanced Import Patterns** - `use_kword.rs`
 
-#### **Standard Library Imports**
+#### **Standard Library & External Crate Imports**
 
 ```rust
 // For structs/enums/types: Import the full path to the type itself
@@ -75,6 +108,9 @@ use std::collections::HashMap;
 // For functions: Import to parent module level
 use std::fmt;
 use std::io;
+
+// External crate dependency - added in Cargo.toml as rand = "0.5.5"
+use rand::Rng;
 ```
 
 #### **Handling Name Conflicts**
@@ -111,6 +147,11 @@ fn main() {
     // HashMap imported directly - no module prefix needed
     let mut map = HashMap::new();
     map.insert(1, 2);
+
+    // External crate usage after import
+    let mut rng = rand::thread_rng();
+    let secret_number: u32 = rng.gen_range(1, 101);
+    println!("Random number: {}", secret_number);
 }
 ```
 
@@ -120,12 +161,13 @@ fn main() {
 
 ### **1. Type-Based Import Rules**
 
-| Item Type     | Import Strategy    | Reasoning             | Example                           |
-| ------------- | ------------------ | --------------------- | --------------------------------- |
-| **Structs**   | Full path to type  | Direct instantiation  | `use std::collections::HashMap;`  |
-| **Enums**     | Full path to type  | Direct variant access | `use std::option::Option;`        |
-| **Functions** | Parent module      | Namespace clarity     | `use std::io;` then `io::stdin()` |
-| **Traits**    | Full path to trait | Method availability   | `use std::fmt::Display;`          |
+| Item Type           | Import Strategy    | Reasoning                | Example                           |
+| ------------------- | ------------------ | ------------------------ | --------------------------------- |
+| **Structs**         | Full path to type  | Direct instantiation     | `use std::collections::HashMap;`  |
+| **Enums**           | Full path to type  | Direct variant access    | `use std::option::Option;`        |
+| **Functions**       | Parent module      | Namespace clarity        | `use std::io;` then `io::stdin()` |
+| **Traits**          | Full path to trait | Method availability      | `use std::fmt::Display;`          |
+| **External Crates** | Context-dependent  | Follow crate conventions | `use rand::Rng;`                  |
 
 ### **2. Conflict Resolution Strategies**
 
@@ -166,7 +208,7 @@ use std::io::{self, Read, Write};
 
 ### **✅ Recommended Patterns**
 
-#### **1. Grouped Imports**
+#### **1. Grouped Imports with Dependencies**
 
 ```rust
 // Standard library first
@@ -175,6 +217,7 @@ use std::fmt;
 use std::io;
 
 // External crates second
+use rand::Rng;
 use serde::{Deserialize, Serialize};
 use tokio::runtime::Runtime;
 
@@ -216,8 +259,11 @@ use std::fmt::Result as FR;
 pub use crate::internal::public_function;
 pub use crate::utils::{helper_fn, UtilityStruct};
 
+// Real example from the code:
+pub use crate::front_of_house::hosting_2;
+
 // Users can now access with:
-// use your_crate::{public_function, helper_fn};
+// use your_crate::{public_function, helper_fn, hosting_2};
 ```
 
 ### **2. Conditional Imports**
@@ -295,6 +341,7 @@ use crate::{
 - **Reduced namespace pollution**: Only necessary items in scope
 - **Faster compilation**: Smaller symbol tables
 - **Better error messages**: Clear import origins
+- **Dependency resolution**: Automatic external crate management
 
 ### **2. Code Maintainability**
 
@@ -381,12 +428,12 @@ use crate::config::Settings;
 - **Namespace management**: Efficient scope control and conflict resolution
 - **Code organization**: Clean, maintainable import patterns
 - **Performance awareness**: Understanding compilation and runtime implications
+- **Dependency management**: External crate integration with Cargo
 
 ### **💼 Real-world Applications**
 
 - **Large codebases**: Organizing complex project dependencies
 - **Library development**: Clean public API design with re-exports
-- **Crate ecosystem integration**: Using external dependencies effectively
 - **Team collaboration**: Consistent import conventions across projects
 - **Performance optimization**: Reducing compilation time and memory usage
 
@@ -409,6 +456,7 @@ use crate::config::Settings;
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
 tokio = { version = "1.0", features = ["full"] }
+rand = "0.5.5"  # External crate used in examples
 
 [dev-dependencies]
 criterion = "0.4"
@@ -451,7 +499,7 @@ Create a library crate and design clean public exports using `pub use`.
 
 _Mastering Rust's module system, one import at a time_ 🦀
 
-**Learning Hours**: 3+ hours focused on import patterns and module system  
+**Learning Hours**: 4+ hours focused on import patterns and module system  
 **Code Examples**: 2 comprehensive files demonstrating real-world usage  
-**Concepts Covered**: 6 major import strategies and best practices  
+**Concepts Covered**: 7 major import strategies and best practices  
 **Skill Level**: Intermediate to Advanced Rust module system understanding
