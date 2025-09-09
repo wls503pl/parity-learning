@@ -1,0 +1,10 @@
+[package]
+name = "HashMap"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+[[bin]]
+name = "HashMap_1"
+path = "./src/HashMap_1.rs"
