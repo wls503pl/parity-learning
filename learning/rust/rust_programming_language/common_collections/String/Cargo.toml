@@ -8,3 +8,7 @@ edition = "2024"
 [[bin]]
 name = "_String"
 path = "src/_String.rs"
+
+[[bin]]
+name = "_String2"
+path = "src/_String2.rs"
