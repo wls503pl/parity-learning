@@ -1,0 +1,10 @@
+[package]
+name = "String"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+[[bin]]
+name = "_String"
+path = "src/_String.rs"
