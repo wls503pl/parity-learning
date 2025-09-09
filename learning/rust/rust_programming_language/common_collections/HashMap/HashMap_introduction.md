@@ -12,8 +12,11 @@
 4. [Ownership and HashMap](#ownership-and-hashmap)
 5. [Accessing Values](#accessing-values)
 6. [Iterating Over HashMap](#iterating-over-hashmap)
-7. [Key Takeaways](#key-takeaways)
-8. [Code Examples](#code-examples)
+7. [Updating HashMap Values](#updating-hashmap-values)
+8. [Entry API for Conditional Operations](#entry-api-for-conditional-operations)
+9. [Practical Applications](#practical-applications)
+10. [Key Takeaways](#key-takeaways)
+11. [Code Examples and Results](#code-examples-and-results)
 
 ## Overview
 
@@ -27,6 +30,7 @@ HashMap is a collection type in Rust that stores data in key-value pairs. It use
 - **Homogeneous**: All keys must be of the same type, and all values must be of the same type
 - **Not in Prelude**: Must be explicitly imported with `use std::collections::HashMap;`
 - **Limited Standard Library Support**: No built-in macros for HashMap creation
+- **Unordered**: No guarantee on iteration order - may vary between program runs
 
 ## Creating HashMap
 
@@ -54,9 +58,16 @@ let team_scores: HashMap<_, _> = teams.iter()
 
 **Process Breakdown**:
 
-1. `iter()` creates immutable reference iterators for both vectors
-2. `zip()` pairs elements from both iterators into tuples
-3. `collect()` consumes the iterator and builds the HashMap
+1. `iter()` creates immutable reference iterators for both vectors (`std::slice::Iter<'_, T>`)
+2. `zip()` pairs elements from both iterators into tuples - length determined by shorter iterator
+3. `collect()` consumes the iterator and builds the HashMap from (K, V) tuples
+
+**Execution Flow**:
+
+- `teams.iter()` → produces iterator of `["Blue", "Yellow"]` references
+- `initial_scores.iter()` → produces iterator of `[10, 50]` references
+- `zip()` → produces iterator of `[("Blue", 10), ("Yellow", 50)]` tuples
+- `collect()` → builds `HashMap<&str, i32>` containing the mappings
 
 ## Ownership and HashMap
 
@@ -85,15 +96,17 @@ let preference = String::from("Primary");
 let mut ref_map = HashMap::new();
 ref_map.insert(&color, &preference);
 // color and preference remain accessible
+println!("Original variables still accessible: color={}, preference={}", color, preference);
 ```
 
 **Important**: When using references, the referenced values must remain valid for the HashMap's lifetime.
 
 ## Accessing Values
 
-Use the `get()` method to retrieve values:
+Use the `get()` method to retrieve values safely:
 
 ```rust
+let team_name = String::from("Blue");
 let score = scores.get(&team_name);
 
 match score {
@@ -107,6 +120,7 @@ match score {
 - `get()` takes a reference to the key as parameter
 - Returns `Option<&Value>` - either `Some(&value)` or `None`
 - Requires proper error handling for missing keys
+- Safe alternative to direct indexing (which would panic on missing keys)
 
 ## Iterating Over HashMap
 
@@ -116,7 +130,107 @@ for (key, value) in &scores {
 }
 ```
 
-**Note**: The iteration order is not guaranteed and may vary between runs.
+**Note**: The iteration order is not guaranteed and may vary between runs due to the hash function implementation.
+
+## Updating HashMap Values
+
+HashMap provides several patterns for updating values:
+
+### 1. Overwriting Existing Values
+
+```rust
+let mut scores = HashMap::new();
+scores.insert(String::from("Blue"), 10);
+scores.insert(String::from("Blue"), 25); // Overwrites previous value
+// Result: {"Blue": 25}
+```
+
+When you insert a key that already exists, the old value is replaced with the new value.
+
+### 2. Conditional Insertion
+
+For cases where you only want to insert if the key doesn't already exist, use the Entry API.
+
+## Entry API for Conditional Operations
+
+The Entry API provides powerful methods for conditional HashMap operations:
+
+### Basic `or_insert()` Usage
+
+```rust
+scores.entry(String::from("Yellow")).or_insert(50);
+```
+
+This inserts the value `50` for key `"Yellow"` only if `"Yellow"` doesn't already exist in the HashMap.
+
+### Entry Types
+
+The `entry()` method returns an `Entry` enum with two variants:
+
+#### VacantEntry
+
+When the key doesn't exist in the HashMap:
+
+```rust
+match scores.entry(String::from("Yellow")) {
+    std::collections::hash_map::Entry::Vacant(e) => {
+        println!("VacantEntry found for key: {:?}", e.key());
+        e.insert(50);
+    }
+    // ... other cases
+}
+```
+
+#### OccupiedEntry
+
+When the key already exists in the HashMap:
+
+```rust
+match scores.entry(String::from("Blue")) {
+    std::collections::hash_map::Entry::Occupied(e) => {
+        println!("OccupiedEntry found for key: {:?}, value: {:?}",
+                 e.key(), e.get());
+    }
+    // ... other cases
+}
+```
+
+### Updating Based on Existing Values
+
+```rust
+let count = map.entry(word).or_insert(0);
+*count += 1;
+```
+
+This pattern:
+
+1. Gets a mutable reference to the value for `word`
+2. If `word` doesn't exist, inserts `0` and returns a reference to it
+3. Increments the value through the mutable reference
+
+## Practical Applications
+
+### Word Frequency Counter
+
+A common use case for HashMap with Entry API:
+
+```rust
+let text = "hello world wonderful world";
+let mut map = HashMap::new();
+
+for word in text.split_whitespace() {
+    let count = map.entry(word).or_insert(0);
+    *count += 1;
+}
+// Result: {"hello": 1, "world": 2, "wonderful": 1}
+```
+
+**Process Explanation**:
+
+1. Split text into words using `split_whitespace()`
+2. For each word, use `entry()` to get an Entry
+3. `or_insert(0)` returns a mutable reference to the value (inserting 0 if new)
+4. Dereference and increment the count
 
 ## Key Takeaways
 
@@ -125,8 +239,37 @@ for (key, value) in &scores {
 3. **Ownership Awareness**: Be mindful of ownership transfer when inserting owned values
 4. **Error Handling**: Always handle the `Option` returned by `get()` method
 5. **Performance**: O(1) average case for insertions and lookups due to hashing
+6. **Entry API**: Use `entry()` and `or_insert()` for conditional operations and value updates
+7. **No Ordering Guarantee**: HashMap iteration order is not deterministic
+8. **Memory Efficiency**: Only allocates space for actual key-value pairs
 
-## Code Examples
+## Code Examples and Results
+
+### Basic HashMap Operations
+
+![HashMap Basic Operations Results](./img/HashMap_1_results.png)
+_Screenshot showing the execution results of basic HashMap operations including creation, ownership handling, accessing values, and iteration_
+
+The first example demonstrates:
+
+- Creating empty HashMap with type annotations
+- Using `collect()` method with `zip()` for HashMap creation
+- Ownership transfer vs reference usage
+- Safe value access with `get()` method
+- HashMap iteration patterns
+
+### Advanced HashMap Operations
+
+![HashMap Advanced Operations Results](./img/HashMap_2_results.png)
+_Screenshot showing the execution results of advanced HashMap operations including value overwriting, Entry API usage, and word frequency counting_
+
+The second example covers:
+
+- Value overwriting behavior
+- Entry API with VacantEntry and OccupiedEntry
+- Conditional insertion patterns
+- Word frequency counter implementation
+- Entry type demonstrations
 
 ### Complete Working Example
 
@@ -134,59 +277,60 @@ for (key, value) in &scores {
 use std::collections::HashMap;
 
 fn main() {
-    // Creating and populating HashMap
+    println!("=== HashMap Comprehensive Demo ===\n");
+
+    // 1. Creating and populating HashMap
     let mut scores = HashMap::new();
     scores.insert(String::from("Blue"), 10);
     scores.insert(String::from("Yellow"), 50);
     scores.insert(String::from("Red"), 25);
 
-    // Accessing values
+    // 2. Accessing values safely
     let team_name = String::from("Blue");
     if let Some(score) = scores.get(&team_name) {
         println!("Team {} has score: {}", team_name, score);
     }
 
-    // Iterating over all entries
+    // 3. Using Entry API for updates
+    scores.entry(String::from("Green")).or_insert(30);
+
+    // 4. Conditional value modification
+    let blue_score = scores.entry(String::from("Blue")).or_insert(0);
+    *blue_score += 5; // Increment existing value
+
+    // 5. Iterating over all entries
+    println!("Final scores:");
     for (team, score) in &scores {
-        println!("{}: {}", team, score);
+        println!("  {}: {}", team, score);
     }
+
+    // 6. Word frequency example
+    let text = "rust is great rust is powerful";
+    let mut word_count = HashMap::new();
+
+    for word in text.split_whitespace() {
+        let count = word_count.entry(word).or_insert(0);
+        *count += 1;
+    }
+
+    println!("\nWord frequencies: {:?}", word_count);
 }
 ```
 
-### Sample Output
-
-![HashMap Execution Results](./img/HashMap_1_results.png)
-_Screenshot showing the actual execution results of the HashMap demonstration program_
+### Sample Output Pattern
 
 ```
-=== HashMap Demonstration ===
+=== HashMap Comprehensive Demo ===
 
-1. Creating an empty HashMap:
-   Created HashMap with key 'Hello' and value 20
-   HashMap: {"Hello": 20}
+Team Blue has score: 10
 
-2. Creating HashMap using collect method:
-   Teams: ["Blue", "Yellow"]
-   Initial scores: [10, 50]
-   Created HashMap: {"Blue": 10, "Yellow": 50}
+Final scores:
+  Red: 25
+  Yellow: 50
+  Green: 30
+  Blue: 15
 
-3. HashMap and Ownership:
-   HashMap after inserting owned values: {"Favorite color": "Blue"}
-   Note: Original String variables can't be used after insert (ownership moved)
-
-   Using references to preserve ownership:
-   HashMap with references: {"Green": "Primary"}
-   Original variables still accessible: color=Green, preference=Primary
-
-4. Accessing HashMap values using get method:
-   Looking for team 'Blue': Score is 10
-   Looking for team 'Red': Team not found
-
-5. Iterating over HashMap using for loop:
-   All team scores:
-   Red: 25
-   Yellow: 50
-   Blue: 10
+Word frequencies: {"rust": 2, "is": 2, "great": 1, "powerful": 1}
 ```
 
-This introduction covers the fundamental concepts of HashMap in Rust, providing both theoretical understanding and practical examples for effective usage.
+This comprehensive introduction covers both fundamental and advanced HashMap concepts in Rust, providing theoretical understanding alongside practical examples for effective usage in real-world applications.

@@ -8,3 +8,7 @@ edition = "2024"
 [[bin]]
 name = "HashMap_1"
 path = "./src/HashMap_1.rs"
+
+[[bin]]
+name = "HashMap_2"
+path = "./src/HashMap_2.rs"
