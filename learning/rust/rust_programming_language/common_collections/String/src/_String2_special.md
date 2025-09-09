@@ -26,10 +26,10 @@ This project demonstrates the fundamental concepts of string handling in Rust, i
 
 The demo program produces the following output, illustrating these concepts:
 
-![string2_usage_1](./src/string2_usage_1.png)
+![string2_usage_1](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/rust/rust_programming_language/common_collections/String/img/string2_usage_1.png)
 _Figure 1: String internal representation, indexing prohibition, UTF-8 views, slicing, and iteration examples_
 
-![string2_usage_2](./src/string2_usage_2.png)
+![string2_usage_2](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/rust/rust_programming_language/common_collections/String/img/string2_usage_2.png)
 _Figure 2: O(1) indexing impossibility, byte vs character count comparison, and safe alternatives_
 
 ## Key Observations from Output
