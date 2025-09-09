@@ -277,7 +277,7 @@ cargo run --bin String1 --verbose
 
 ### **Program Output Screenshot**:
 
-![string_usage]([./src/string_usage.png](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/rust/rust_programming_language/common_collections/String/img/string_usage.png))
+![string_usage](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/rust/rust_programming_language/common_collections/String/img/string_usage.png)
 
 ### **Detailed Output Analysis**:
 
