@@ -1,0 +1,22 @@
+[package]
+name = "Result_recoverable_errors"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+[[bin]]
+name = "Result_1"
+path = "./src/Result_1.rs"
+
+[[bin]]
+name = "Result_ErrorKind"
+path = "./src/Result_ErrorKind.rs"
+
+[[bin]]
+name = "Result_unwrap"
+path = "./src/Result_unwrap.rs"
+
+[[bin]]
+name = "Result_expect"
+path = "./src/Result_expect.rs"
