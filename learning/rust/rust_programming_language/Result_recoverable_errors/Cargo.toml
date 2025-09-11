@@ -20,3 +20,19 @@ path = "./src/Result_unwrap.rs"
 [[bin]]
 name = "Result_expect"
 path = "./src/Result_expect.rs"
+
+[[bin]]
+name = "QMO"
+path = "./src/Question_Mark_Operator.rs"
+
+[[bin]]
+name = "PE"
+path = "./src/Propagating_Errors.rs"
+
+[[bin]]
+name = "QMO_CC"
+path = "./src/QMO_Chain_calls.rs"
+
+[[bin]]
+name = "QMO_M"
+path = "./src/QMO_and_Main.rs"
