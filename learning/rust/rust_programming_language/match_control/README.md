@@ -264,21 +264,9 @@ To run this code:
 # Clone or download the repository
 # Navigate to the project directory
 cargo run
-```
-
-### Actual Program Output
-
-The following screenshots show the actual output when running the examples:
-
-**First Part of Output (Examples 1-4):**
-![match_ctrl_testResult1](./src/match_control_testResults_part1.png)
-
-**Second Part of Output (Examples 5-7):**
-![match_ctrl_testResult2](./src/match_control_testResults_part2.png)
 
 ### Complete Expected Output Text:
 
-```
 === Rust Match Control Flow Examples ===
 
 1. Basic Match with Enum:
