@@ -1,0 +1,18 @@
+[package]
+name = "Generics"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+[[bin]]
+name = "GS"
+path = "./src/Generics_inStruct.rs"
+
+[[bin]]
+name = "GF"
+path = "./src/Generics_inFunction.rs"
+
+[[bin]]
+name = "mono"
+path = "./src/monomorphization.rs"
