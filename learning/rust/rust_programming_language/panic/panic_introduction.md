@@ -187,6 +187,179 @@ match v.get(99) {
 }
 ```
 
+## When to Use `panic!` - Detailed Guidelines
+
+### General Principle
+
+In Rust, errors are mainly divided into two categories: recoverable and unrecoverable errors.
+
+- **Calling `panic!` macro** = Unrecoverable error - the program terminates
+- **Returning `Result`** = Recoverable error - error propagation allows the caller to decide how to handle it
+
+### Decision Framework
+
+**Use `panic!` when:**
+
+- You can make the decision on behalf of the code caller that certain situations are unrecoverable
+- The calling context cannot meaningfully recover from the error
+
+**Return `Result` when:**
+
+- You want to give error handling authority to the code caller
+- The caller can decide based on their specific situation whether to recover from the error
+- The caller might still choose to call `panic!` if they determine the error is unrecoverable
+
+### Scenarios Where `panic!` is Appropriate
+
+#### 1. Example Code, Prototypes, and Tests
+
+**Demonstrating concepts:**
+
+```rust
+// Using unwrap to demonstrate concepts clearly
+let value = some_result.unwrap();
+```
+
+**Prototype code:**
+
+```rust
+// Quick prototyping with unwrap/expect
+let config = load_config().expect("Config file must exist");
+```
+
+**Testing:**
+
+```rust
+#[test]
+fn test_something() {
+    let result = risky_operation().unwrap(); // OK in tests
+    assert_eq!(result, expected);
+}
+```
+
+#### 2. When You Have More Information Than the Compiler
+
+**Certain `Result` is `Ok`:**
+
+```rust
+use std::net::IpAddr;
+
+fn main() {
+    // We know "127.0.0.1" is a valid IP address
+    let home: IpAddr = "127.0.0.1".parse().unwrap();
+    // This will never panic because the input is guaranteed valid
+}
+```
+
+#### 3. Error Handling Guidelines for Production Code
+
+**Use `panic!` when your code might be in a corrupted state:**
+
+- Invalid, contradictory, or missing values are passed to your code
+- **AND** one of the following conditions applies:
+  - This corrupted state is not expected to occur occasionally
+  - Your code cannot function in this state
+  - There's no good way to encode this information in the types you're using
+
+#### 4. Specific Scenarios
+
+**Caller passes meaningless parameter values:**
+
+```rust
+pub fn calculate_interest(principal: f64, rate: f64) -> f64 {
+    if principal < 0.0 || rate < 0.0 {
+        panic!("Principal and rate must be non-negative");
+    }
+    principal * rate
+}
+```
+
+**External uncontrollable code returns illegal state that you cannot fix:**
+
+```rust
+fn process_external_data() {
+    let data = external_library_call();
+    if !data.is_valid() {
+        panic!("External library returned invalid data that cannot be recovered");
+    }
+    // ... process data
+}
+```
+
+**If failure is predictable and handleable:**
+
+```rust
+// Use Result instead of panic
+fn divide(a: f64, b: f64) -> Result<f64, String> {
+    if b == 0.0 {
+        Err("Cannot divide by zero".to_string())
+    } else {
+        Ok(a / b)
+    }
+}
+```
+
+**Validate values before operations (security consideration):**
+
+```rust
+fn access_array(arr: &[i32], index: usize) -> i32 {
+    if index >= arr.len() {
+        panic!("Index {} out of bounds for array length {}", index, arr.len());
+    }
+    arr[index] // This is why the standard library panics on out-of-bounds access
+}
+```
+
+### Creating Custom Types for Validation
+
+**Encapsulate validation logic in the constructor:**
+
+```rust
+pub struct Guess {
+    value: i32,
+}
+
+impl Guess {
+    pub fn new(value: i32) -> Guess {
+        if value < 1 || value > 100 {
+            panic!("Guess value must between 1 and 100, got {}", value);
+        }
+        Guess { value }
+    }
+
+    // Getter: Returns field data
+    // Fields are private, external code cannot assign values directly
+    pub fn value(&self) -> i32 {
+        self.value
+    }
+}
+
+fn main() {
+    loop {
+        // ...
+        let guess = "32";
+        let guess: i32 = match guess.trim().parse() {
+            Ok(num) => num,
+            Err(_) => continue,
+        };
+
+        let guess = Guess::new(guess); // Validation happens here
+        // ...
+        break;
+    }
+}
+```
+
+This pattern ensures that:
+
+- Invalid values cannot create a `Guess` instance
+- Once created, a `Guess` is guaranteed to be valid
+- The type system enforces the validation contract
+
+### Summary
+
+The key principle is **responsibility**: use `panic!` when you can reasonably decide that a situation is unrecoverable on behalf of your caller. Use `Result` when the caller is better positioned to make that decision. This approach leads to more robust and maintainable code by putting error handling decisions at the appropriate level of abstraction.
+
 ## Conclusion
 
 Rust's panic system provides a clear distinction between recoverable and unrecoverable errors. While panics should be avoided in most cases by using proper error handling with `Result`, they serve as a crucial safety net for detecting bugs and preventing undefined behavior. Understanding how to debug panics with backtraces and when to use different panic strategies is essential for writing robust Rust applications.
