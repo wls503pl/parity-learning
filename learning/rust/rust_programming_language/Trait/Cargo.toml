@@ -1,0 +1,11 @@
+[package]
+name = "demo"     # Here mannually change 'Trait' to 'demo'
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+# Configure trait_1.rs as the main binary
+[[bin]]
+name = "trait_1"
+path = "src/trait_1.rs"
