@@ -1,0 +1,30 @@
+[package]
+name = "Trait2"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+[[bin]]
+name = "impl_trait"
+path = "./src/impl_trait_syntax.rs"
+
+[[bin]]
+name = "trait_bounds"
+path = "./src/trait_bounds_syntax.rs"
+
+[[bin]]
+name = "where_clause"
+path = "./src/where_clause_syntax.rs"
+
+[[bin]]
+name = "return_impl_trait"
+path = "./src/return_impl_trait.rs"
+
+[[bin]]
+name = "largeset_func_trait"
+path = "./src/largeset_func_trait.rs"
+
+[[bin]]
+name = "conditional_method_impl"
+path = "./src/conditional_method_impl.rs"

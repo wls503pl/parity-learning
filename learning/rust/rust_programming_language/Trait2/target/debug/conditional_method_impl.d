@@ -1,0 +1,1 @@
+E:\parity-learning\learning\rust\rust_programming_language\Trait2\target\debug\conditional_method_impl.exe: E:\parity-learning\learning\rust\rust_programming_language\Trait2\src\conditional_method_impl.rs
