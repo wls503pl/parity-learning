@@ -6,5 +6,13 @@ edition = "2024"
 [dependencies]
 
 [[bin]]
+name = "error_display"
+path = "./src/error_display.rs"
+
+[[bin]]
 name = "lifetime_1"
 path = "./src/lifetime_1.rs"
+
+[[bin]]
+name = "lifetime_2"
+path = "./src/lifetime_2.rs"
