@@ -1,0 +1,10 @@
+[package]
+name = "LifeTime"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+[[bin]]
+name = "lifetime_1"
+path = "./src/lifetime_1.rs"
