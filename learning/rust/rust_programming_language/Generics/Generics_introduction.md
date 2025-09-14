@@ -167,9 +167,9 @@ Here's the output from running the `Generics_inFunction.rs` program, demonstrati
 
 The output shows:
 
-![Program_Output](./src/diff_para_inStruct_Func.png)
+![Program_Output](./img/diff_para_inStruct_Func.png)
 
-This demonstrates how the `mixup` method takes two `Point` instances with different type combinations and creates a new `Point` using the `x` value from the first point and the `y` value from the second point. In this case:
+This demonstrates how the `mixup` method takes two `Point` instances with different type combinations and creates a new `Point` using the `x` value from the first Point and the `y` value from the second Point. In this case:
 
 - `p1` has `x: 6` (i32) and `y: 8` (i32)
 - `p2` has `x: "Hello"` (&str) and `y: "c"` (&str)
