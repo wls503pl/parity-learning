@@ -1,1 +1,0 @@
-E:\parity-learning\learning\rust\rust_programming_language\common_collections\Vector\target\debug\use_vector.exe: E:\parity-learning\learning\rust\rust_programming_language\common_collections\Vector\src\use_vector.rs

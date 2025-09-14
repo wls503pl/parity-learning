@@ -1,1 +1,0 @@
-E:\parity-learning\learning\rust\rust_programming_language\Trait\target\debug\trait_1.exe: E:\parity-learning\learning\rust\rust_programming_language\Trait\src\lib.rs E:\parity-learning\learning\rust\rust_programming_language\Trait\src\trait_1.rs
