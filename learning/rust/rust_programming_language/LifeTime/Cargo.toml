@@ -16,3 +16,27 @@ path = "./src/lifetime_1.rs"
 [[bin]]
 name = "lifetime_2"
 path = "./src/lifetime_2.rs"
+
+[[bin]]
+name = "lifetime_3"
+path = "./src/lifetime_3.rs"
+
+[[bin]]
+name = "lifetime_inStruct"
+path = "./src/lifetime_inStruct.rs"
+
+[[bin]]
+name = "lifetime_elision"
+path = "./src/lifetime_elision.rs"
+
+[[bin]]
+name = "lifetime_inMethod"
+path = "./src/lifetime_inMethod.rs"
+
+[[bin]]
+name = "lifetime_static"
+path = "./src/lifetime_static.rs"
+
+[[bin]]
+name = "lifetime_generics"
+path = "./src/lifetime_generics.rs"
