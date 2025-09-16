@@ -74,7 +74,6 @@ The test execution order is:
 When running `cargo test`, the output includes the following information:
 
 ![TestResultsWithOneTest](./img/testPassed_explaination.png)
-)
 
 The metrics mean:
 
@@ -113,13 +112,87 @@ Failure information includes:
 - Location of failure (file and line number)
 - Option to use `RUST_BACKTRACE=1` environment variable to display detailed stack trace
 
-## Practical Code Example
+## Advanced Testing Techniques
 
-Based on the provided `lib.rs` file, here's a complete test example:
+### 1. Custom Error Messages
+
+You can provide custom error messages in assertions to make test failures more informative:
 
 ```rust
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
+pub fn greeting(name: &str) -> String {
+    format!("Hello!")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn greetings_contain_name() {
+        let result = greeting("Carol");
+        assert!(
+            result.contains("Carol"),
+            "Greeting didn't contain name, value was '{}'",
+            result
+        );
+    }
+}
+```
+
+![Custom Error Messages Test Failure](https://github.com/user/repo/blob/main/custom_error_messages.png)
+
+**Key Point**: The custom error message helps identify exactly what went wrong when the test fails.
+
+### 2. Testing Functions that Return Results
+
+Tests can return `Result<(), E>` to handle errors gracefully:
+
+```rust
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn it_works() -> Result<(), String> {
+        if 2 + 3 == 6 {
+            Ok(())
+        } else {
+            Err(String::from("two plus two does not equal four"))
+        }
+    }
+}
+```
+
+![Return Result Test Failure](https://github.com/user/repo/blob/main/return_Result_failed.png)
+
+**Benefits**:
+
+- Cleaner error handling in tests
+- More descriptive error messages
+- Can use `?` operator for error propagation
+
+### 3. Testing Panic Conditions with `should_panic`
+
+Use `#[should_panic]` to test that code panics under specific conditions:
+
+```rust
+pub struct Guess {
+    value: u32,
+}
+
+impl Guess {
+    pub fn new(value: u32) -> Guess {
+        if value < 1 {
+            panic!(
+                "Guess value must be greater than or equal to 1, got {}.",
+                value
+            )
+        } else if value > 100 {
+            panic!(
+                "Guess value must be less than or equal to 100, got {}.",
+                value
+            )
+        }
+
+        Guess { value }
+    }
 }
 
 #[cfg(test)]
@@ -127,29 +200,33 @@ mod tests {
     use super::*;
 
     #[test]
-    fn exploration() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-
-    #[test]
-    fn another() {
-        panic!("Make this test fail")
+    #[should_panic(expected = "Guess value must be less than or equal to 100")]
+    fn greater_than_100() {
+        Guess::new(200); // This should panic with the expected message
     }
 }
 ```
 
-This example includes:
+#### Important Notes about `should_panic`:
 
-- A simple `add` function
-- A successful test `exploration`
-- An intentionally failing test `another`
+- **Test passes** when the code panics with the expected message:
+  ![Should Panic Success](https://github.com/user/repo/blob/main/should_panic_ok.png)
 
-When running both tests, you can see the mixed results.
+- **Test fails** when wrong panic message occurs:
+  ![Should Panic Expected Failure](https://github.com/user/repo/blob/main/should_panic_expect.png)
+
+- **Test fails** when no panic occurs:
+  ![Should Panic Failed](https://github.com/user/repo/blob/main/should_panic_failed.png)
+
+**Best Practices**:
+
+- Always use `expected` parameter to specify exact panic message
+- Make panic messages specific to avoid false positives
+- Test different panic conditions separately
 
 ## Assert Macros and Integration Tests
 
-Rust provides several assertion macros for different testing scenarios. Let's explore these with a practical example using a `Rectangle` struct.
+Rust provides several assertion macros for different testing scenarios:
 
 ### Common Assert Macros
 
@@ -249,16 +326,61 @@ cargo test larger_can_hold_smaller
 
 The `#[derive(Debug)]` annotation on `Rectangle` allows the struct to be printed in assertion failure messages, making debugging easier.
 
+## Test Organization and Best Practices
+
+### Project Structure
+
+Based on the provided project structure:
+
+```
+rust_programming_language/
+├── adder/
+│   ├── src/
+│   │   └── lib.rs
+│   └── tests/
+│       ├── custom_error_messages.rs
+│       ├── return_Result.rs
+│       ├── should_panic.rs
+│       └── test_assert.rs
+├── Cargo.lock
+├── Cargo.toml
+└── test_inRust.md
+```
+
+### Running Specific Tests
+
+```bash
+# Run all tests
+cargo test
+
+# Run specific test file
+cargo test --test custom_error_messages
+
+# Run specific test function
+cargo test greetings_contain_name
+
+# Run tests with specific name pattern
+cargo test should_panic
+```
+
 ## Summary
 
-Rust's testing system provides powerful and easy-to-use testing functionality:
+Rust's testing system provides powerful and comprehensive testing functionality:
 
-1. Use the `#[test]` attribute to mark test functions
-2. Use `cargo test` to run all tests
-3. Tests run in independent threads without interfering with each other
-4. Provides detailed test results and failure information
-5. Supports documentation testing to keep code and documentation synchronized
-6. Offers multiple assertion macros for different validation needs
-7. Supports both unit tests (in `src/`) and integration tests (in `tests/`)
+1. **Basic Testing**: Use `#[test]` attribute to mark test functions
+2. **Test Execution**: Use `cargo test` to run all tests with detailed output
+3. **Error Handling**: Tests can return `Result<(), E>` for better error handling
+4. **Panic Testing**: Use `#[should_panic]` with `expected` parameter for testing panic conditions
+5. **Custom Messages**: Provide meaningful error messages in assertions
+6. **Multiple Assertions**: Use `assert!`, `assert_eq!`, and `assert_ne!` for different validation needs
+7. **Test Organization**: Support both unit tests (in `src/`) and integration tests (in `tests/`)
+8. **Detailed Feedback**: Comprehensive test results with failure analysis
+
+### Key Testing Principles
+
+- **Test Independence**: Each test runs in its own thread
+- **Clear Messaging**: Use descriptive test names and custom error messages
+- **Comprehensive Coverage**: Test both success and failure conditions
+- **Documentation**: Tests serve as living documentation of expected behavior
 
 Writing and running tests ensures code correctness and reliability, which is one of the best practices in Rust development.
