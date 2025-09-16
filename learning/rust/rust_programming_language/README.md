@@ -92,6 +92,16 @@ This repository documents a systematic journey through **THE RUST PROGRAMMING LA
 - **Performance Trade-offs** - Static vs dynamic dispatch considerations
 - **Project:** `Trait2/`
 
+#### 12. **Lifetimes** ✅
+
+- **Lifetime Annotations** - Describe relationships between reference lifetimes
+- **Preventing Dangling References** - Compile-time memory safety guarantees
+- **Generic Lifetime Parameters** - `<'a>` syntax for function signatures
+- **Lifetime Elision Rules** - When annotations can be omitted automatically
+- **Struct Lifetimes** - References in struct fields require lifetime parameters
+- **Static Lifetime (`'static`)** - References valid for entire program duration
+- **Project:** `LifeTime/`
+
 ---
 
 ## 🛠️ How to Learn
@@ -123,6 +133,7 @@ cd Result_recoverable_errors && cargo run --bin Result_1
 cd Generics && cargo run --bin Generics_inFunction
 cd Trait && cargo run --bin trait_1
 cd Trait2 && cargo run --bin impl_trait_syntax
+cd LifeTime && cargo run --bin lifetime_1
 ```
 
 ### **Learning Strategy**
@@ -132,6 +143,7 @@ cd Trait2 && cargo run --bin impl_trait_syntax
 3. **Focus on ownership first** - Everything else builds on this
 4. **Practice error handling** - Most real code needs this
 5. **Master traits gradually** - Basic traits first, then advanced patterns
+6. **Understand lifetimes deeply** - Critical for complex reference patterns
 
 ---
 
@@ -142,6 +154,7 @@ cd Trait2 && cargo run --bin impl_trait_syntax
 - No null pointer crashes
 - No memory leaks or buffer overflows
 - Compile-time guarantees
+- Reference lifetime validation
 
 ### **Error Handling**
 
@@ -168,6 +181,13 @@ cd Trait2 && cargo run --bin impl_trait_syntax
 - Choose between static and dynamic dispatch
 - Build flexible, maintainable APIs
 
+### **Lifetime Management**
+
+- Prevent dangling references at compile time
+- Write safe functions returning references
+- Design structs with borrowed data safely
+- Master automatic lifetime inference rules
+
 ---
 
 ## 📊 Progress Tracking
@@ -183,6 +203,7 @@ cd Trait2 && cargo run --bin impl_trait_syntax
 | **Generic Types**           | Important  | ✅ Complete |
 | **Basic Traits**            | Important  | ✅ Complete |
 | **Advanced Trait Patterns** | Important  | ✅ Complete |
+| **Lifetimes**               | Critical   | ✅ Complete |
 
 ## 💡 Tips for Success
 
@@ -193,6 +214,7 @@ cd Trait2 && cargo run --bin impl_trait_syntax
 - **Error handling** - Embrace `Result`, avoid `unwrap()` in real code
 - **Generic constraints** - Understanding when and how to use trait bounds
 - **Trait complexity** - Start with simple traits before advanced patterns
+- **Lifetime annotations** - Practice with function signatures and struct definitions
 
 ### **Best Practices Learned**
 
@@ -204,6 +226,8 @@ cd Trait2 && cargo run --bin impl_trait_syntax
 - Use `impl Trait` for simple cases, trait bounds for complex constraints
 - Apply where clauses for readable complex generic bounds
 - Choose static dispatch (`impl Trait`) over dynamic (`Box<dyn Trait>`) when possible
+- Rely on lifetime elision rules when possible, annotate explicitly when needed
+- Avoid `'static` lifetime unless truly necessary
 
 ### **Real-World Applications**
 
@@ -213,21 +237,22 @@ cd Trait2 && cargo run --bin impl_trait_syntax
 - **Data processing** with performance guarantees
 - **Generic libraries** with flexible, type-safe APIs
 - **High-performance applications** leveraging zero-cost trait abstractions
+- **Safe concurrent programs** with lifetime-validated shared data
 
 ---
 
 ## 📈 Learning Statistics
 
-**Time Investment:** 120+ hours hands-on practice  
-**Code Examples:** 50+ working implementations  
-**Core Concepts Mastered:** 20+ fundamental Rust patterns
+**Time Investment:** 130+ hours hands-on practice  
+**Code Examples:** 55+ working implementations  
+**Core Concepts Mastered:** 22+ fundamental Rust patterns
 
 ---
 
 ## 👨‍💻 Author
 
 **Peile Wu** (peile.wu.1990@gmail.com)  
-_Updated: September 14, 2025_
+_Updated: September 16, 2025_
 
 ---
 
