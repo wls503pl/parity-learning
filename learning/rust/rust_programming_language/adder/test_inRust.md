@@ -138,7 +138,7 @@ mod tests {
 }
 ```
 
-![Custom Error Messages Test Failure](https://github.com/user/repo/blob/main/custom_error_messages.png)
+![Custom Error Messages Test Failure](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/rust/rust_programming_language/adder/img/custom_error_messages.png)
 
 **Key Point**: The custom error message helps identify exactly what went wrong when the test fails.
 
@@ -160,7 +160,7 @@ mod tests {
 }
 ```
 
-![Return Result Test Failure](https://github.com/user/repo/blob/main/return_Result_failed.png)
+![Return Result Test Failure](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/rust/rust_programming_language/adder/img/return_Result_failed.png)
 
 **Benefits**:
 
@@ -210,13 +210,16 @@ mod tests {
 #### Important Notes about `should_panic`:
 
 - **Test passes** when the code panics with the expected message:
-  ![Should Panic Success](https://github.com/user/repo/blob/main/should_panic_ok.png)
+  
+  ![Should Panic Success](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/rust/rust_programming_language/adder/img/should_panic_ok.png)
 
 - **Test fails** when wrong panic message occurs:
-  ![Should Panic Expected Failure](https://github.com/user/repo/blob/main/should_panic_expect.png)
+  
+  ![Should Panic Expected Failure](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/rust/rust_programming_language/adder/img/should_panic_expect.png)
 
 - **Test fails** when no panic occurs:
-  ![Should Panic Failed](https://github.com/user/repo/blob/main/should_panic_failed.png)
+  
+  ![Should Panic Failed](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/rust/rust_programming_language/adder/img/should_panic_failed.png)
 
 **Best Practices**:
 
