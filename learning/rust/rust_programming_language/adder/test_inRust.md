@@ -29,7 +29,24 @@ cargo new adder --lib
 
 Opening the `lib.rs` file, you can see there's a `tests` module and test function:
 
-![Test code structure](./img/test_content.png)
+```rust
+pub fn add(left: u64, right: u64) -> u64 {
+    left + right
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_works() {
+        let result = add(2, 2);
+        assert_eq!(result, 4);
+    }
+}
+```
+
+![TestCodeStructure](./img/test_content.png)
 
 **Note:** `it_works()` is a test function because it's decorated with the `#[test]` attribute, not because it's located in a `tests` module. The `tests` module can also contain regular non-test functions.
 
@@ -50,13 +67,14 @@ The test execution order is:
 2. **Compilation complete**: `Finished`, also prints compilation time
 3. **Running tests**: `Running`, executes the generated `adder-***.exe` located in the `target\debug\deps\` folder
 
-![Successful test run](./img/cargo_run_test.png)
+![SuccessfulTestRun](./img/cargo_run_test.png)
 
 ### Understanding Test Results
 
 When running `cargo test`, the output includes the following information:
 
-![Test results with one test](./img/testPassed_explaination.png)
+![TestResultsWithOneTest](./img/testPassed_explaination.png)
+)
 
 The metrics mean:
 
@@ -86,7 +104,7 @@ fn another() {
 
 When running code containing failing tests, the output looks like this:
 
-![Failed test output](./img/test_error.png)
+![FailedTestOutput](./img/test_error.png)
 
 Failure information includes:
 
@@ -129,6 +147,108 @@ This example includes:
 
 When running both tests, you can see the mixed results.
 
+## Assert Macros and Integration Tests
+
+Rust provides several assertion macros for different testing scenarios. Let's explore these with a practical example using a `Rectangle` struct.
+
+### Common Assert Macros
+
+- **`assert!`**: Checks if a condition is true
+- **`assert_eq!`**: Checks if two values are equal
+- **`assert_ne!`**: Checks if two values are not equal
+
+### Integration Test Example
+
+Here's a complete example in `tests/test_assert.rs`:
+
+```rust
+#[derive(Debug)]
+pub struct Rectangle {
+    length: u32,
+    width: u32,
+}
+
+impl Rectangle {
+    pub fn can_hold(&self, other: &Rectangle) -> bool {
+        self.length > other.length && self.width > other.width
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*; // Import all contents of the external module
+
+    #[test]
+    fn larger_can_hold_smaller() {
+        let larger = Rectangle {
+            length: 8,
+            width: 7,
+        };
+
+        let smaller = Rectangle {
+            length: 5,
+            width: 1,
+        };
+        assert!(larger.can_hold(&smaller));
+    }
+
+    #[test]
+    fn smaller_cannot_hold_larger() {
+        let larger = Rectangle {
+            length: 8,
+            width: 7,
+        };
+
+        let smaller = Rectangle {
+            length: 5,
+            width: 1,
+        };
+
+        assert!(!smaller.can_hold(&larger));
+    }
+
+    pub fn add_two(a: i32) -> i32 {
+        a + 2
+    }
+
+    #[test]
+    fn test_eq() {
+        assert_eq!(5, add_two(3));
+    }
+
+    #[test]
+    fn test_nq() {
+        assert_ne!(5, add_two(2));
+    }
+}
+```
+
+### Running Integration Tests
+
+Integration tests are placed in the `tests/` directory and run with:
+
+```bash
+# Run all tests (unit tests + integration tests)
+cargo test
+
+# Run only the specific integration test file
+cargo test --test test_assert
+
+# Run specific test function
+cargo test larger_can_hold_smaller
+```
+
+![Assert test results](./img/test_assert.png)
+
+### Key Points About Assert Macros
+
+1. **`assert!(condition)`**: Panics if condition is false
+2. **`assert_eq!(left, right)`**: Panics if values are not equal, provides detailed error message
+3. **`assert_ne!(left, right)`**: Panics if values are equal
+4. **`use super::*`**: Imports all items from the parent module into the test module
+
+The `#[derive(Debug)]` annotation on `Rectangle` allows the struct to be printed in assertion failure messages, making debugging easier.
+
 ## Summary
 
 Rust's testing system provides powerful and easy-to-use testing functionality:
@@ -138,5 +258,7 @@ Rust's testing system provides powerful and easy-to-use testing functionality:
 3. Tests run in independent threads without interfering with each other
 4. Provides detailed test results and failure information
 5. Supports documentation testing to keep code and documentation synchronized
+6. Offers multiple assertion macros for different validation needs
+7. Supports both unit tests (in `src/`) and integration tests (in `tests/`)
 
 Writing and running tests ensures code correctness and reliability, which is one of the best practices in Rust development.
