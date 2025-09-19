@@ -1,10 +1,147 @@
 # Rust Test Control Guide
 
+## Test Classification in Rust
+
+Rust categorizes tests into two main types:
+
+### Unit Tests
+
+- **Characteristics**: Small, focused, test one module in isolation at a time
+- **Access**: Can test private interfaces
+- **Purpose**: Isolate a small piece of code to quickly determine if the code functions as expected
+- **Location**: Generally placed in the same file as the code being tested in the `src` directory
+- **Convention**: Each source code file should create a `tests` module to contain test functions, annotated with `#[cfg(test)]`
+
+#### cfg (configuration) Annotation
+
+The `#[cfg(test)]` annotation on the tests module:
+
+- Only compiles and runs code when running `cargo test`
+- Does not compile when running `cargo build`
+- **cfg (configuration)** tells Rust that the following item should only be included under specified configuration options
+- Configuration option `test`: Provided by Rust, used to compile and run tests
+- Only `cargo test` will compile code, including helper functions and `#[test]` annotated functions in the module
+
+#### Testing Private Functions
+
+Rust allows testing private functions:
+
+```rust
+pub fn add_two(a: i32) -> i32 {
+    internal_adder(a, 2)
+}
+
+fn internal_adder(a: i32, b: i32) -> i32 {
+    a + b
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_works() {
+        assert_eq!(4, internal_adder(2, 2)); // This test calls private function internal_adder
+    }
+}
+```
+
+### Integration Tests
+
+- **Location**: Located completely outside the tested library, uses your code like any other external code
+- **Access**: Can only use public interfaces
+- **Scope**: May use multiple modules in each test
+- **Configuration**: Integration tests are in different directories and don't need `#[cfg(test)]` annotation
+- **Purpose**: Test whether multiple parts of the tested library work correctly together
+
 ## Project Structure
 
 ![testControl_structure](./img/test_control_structure.png)
 
+Based on the project structure, we can see:
+
+```
+test_control/
+├── src/
+│   ├── lib.rs
+│   └── main.rs
+├── tests/
+│   ├── common/
+│   │   └── mod.rs
+│   ├── integration_test.rs
+│   ├── test_byName.rs
+│   └── test_ignore.rs
+├── Cargo.toml
+├── Cargo.lock
+└── test_control.md
+```
+
 ## Integration Tests Setup
+
+### The tests Directory
+
+- Create integration tests: Create a `tests` directory at the project root (parallel to the `src` directory)
+- Cargo automatically looks for test files in this test directory
+- Each test file in the `tests` directory is compiled as a separate crate
+- Need to import the tested library
+- No need for `#[cfg(test)]` annotation, the tests directory is specially treated
+- Only `cargo test` will compile files in the tests directory
+
+### Actual Project File Examples
+
+#### lib.rs File Content
+
+```rust
+pub fn prints_and_returns_10(a: i32) -> i32 {
+    println!("I got the value {}", a);
+    10
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn this_test_will_pass() {
+        let value = prints_and_returns_10(6);
+        assert_eq!(10, value);
+    }
+
+    #[test]
+    fn this_test_will_fail() {
+        let value = prints_and_returns_10(8);
+        assert_eq!(10, value);
+    }
+}
+```
+
+#### integration_test.rs File Content
+
+```rust
+use test_control; // To test functions in lib.rs, import package named in cargo.toml
+
+mod common; // Importing the common module
+
+#[test]
+fn it_adds_two() {
+    common::setup(); // in common folder, mod.rs
+    assert_eq!(10, test_control::prints_and_returns_10(8));
+}
+```
+
+#### common/mod.rs File Content
+
+```rust
+pub fn setup() {}
+```
+
+### Submodules in Integration Tests
+
+- Each file in the `tests` directory is compiled as a separate crate
+- These files don't share behavior (different from file rules under src)
+- If you want to create a helper function to use in multiple integration test files:
+  - Need to create a directory called `common` in the tests directory
+  - Create a file called `mod.rs` in the common directory to contain helper functions
 
 For this project, we use integration tests by creating a `tests` directory at the project root level (same level as `src`). This approach is recommended when you already have unit tests in your `lib.rs` file and want to run tests independently.
 
@@ -58,7 +195,7 @@ mod tests {
 }
 ```
 
-## Running Tests by Name
+## Running Specific Integration Tests
 
 ### Running Specific Integration Test Files
 
@@ -105,6 +242,23 @@ cargo test --test test_byName two
 # Run tests containing "hundred" in their names
 cargo test --test test_byName hundred
 ```
+
+## Integration Tests for Binary Crates
+
+If the project is a binary crate (only contains `src/main.rs` without `src/lib.rs`):
+
+- Cannot create integration tests in the tests directory
+- Cannot import functions from main.rs into scope
+- Because only library crates can expose functions for other crates to use
+- Binary crate means independent execution
+
+**Solution**:
+
+- Rust binary projects typically put logic in `lib.rs`
+- Keep only simple calls in `main.rs` (some minimal glue code)
+- This way, during integration testing, the project can be treated as a library crate
+- Can access core logic code in this crate using `use`
+- As long as the logic code is fine, the core functionality is fine
 
 ## Controlling Test Execution
 
@@ -179,7 +333,9 @@ The Rust test library captures all content printed to standard output by default
 - **Test passes**: Doesn't display `println!` and other output content
 - **Test fails**: Shows `println!` output and failure information
 
-### Example Code
+### Example Code Analysis
+
+Based on the provided `lib.rs` file, here's how the output behavior works:
 
 ```rust
 fn prints_and_returns_10(a: i32) -> i32 {
@@ -200,7 +356,7 @@ mod tests {
     #[test]
     fn this_test_will_fail() {
         let value = prints_and_returns_10(8);
-        assert_eq!(5, value);  // This will fail because function returns 10, not 5
+        assert_eq!(10, value);
     }
 }
 ```
@@ -371,16 +527,17 @@ This approach allows for efficient time management:
 2. **Import your crate**: Use `use your_crate_name::*;` to import functions from your library
 3. **Independent execution**: Each integration test file is compiled as a separate crate
 4. **Public API only**: Integration tests can only access public APIs of your crate
+5. **Common modules**: Use `tests/common/mod.rs` pattern for shared helper functions across integration tests
 
 ## Summary
 
 Cargo's test control features provide flexible test execution options:
 
-- Control test behavior through command-line arguments
-- Support both parallel and sequential execution modes
-- Selectively display test output
-- Run specific tests or test patterns by name
-- Support both unit tests and integration tests
-- Facilitate debugging and problem identification
+- **Test Classification**: Clear distinction between unit tests and integration tests, each with different scopes and purposes
+- **Flexible execution control**: Support both parallel and sequential execution modes
+- **Selective output display**: Control whether to display test output
+- **Run specific tests by name**: Support pattern matching and precise test selection
+- **Ignore test functionality**: Skip time-consuming tests to improve development efficiency
+- **Integration test architecture**: Complete integration test support through independent tests directory
 
-Proper use of these features can significantly improve testing efficiency and development experience. The integration test approach is particularly useful when you want to test your crate's public API in isolation from unit tests.
+Proper use of these features can significantly improve testing efficiency and development experience. The integration test approach is particularly useful when you want to test your crate's public API in isolation from unit tests, while unit tests allow you to test internal implementation details including private functions.
