@@ -7,7 +7,13 @@ test_control/
 ├── src/
 │   ├── lib.rs          # Main library file with test code
 │   └── main.rs         # Main program entry point
+├── tests/              # Integration tests directory
+│   └── test_byName.rs  # Integration test file
 ├── img/                # Image resources directory
+│   ├── test_by_name/
+│   │    ├── run_multiple_test.png
+│   │    ├── run_single_test.png
+│   │    └── test_byName_rs.png
 │   ├── cargo_test____help.png
 │   ├── cargo_test__help.png
 │   ├── println!_notShow.png
@@ -15,6 +21,87 @@ test_control/
 ├── target/             # Build output directory
 ├── Cargo.lock          # Dependency lock file
 └── Cargo.toml          # Project configuration file
+```
+
+## Integration Tests Setup
+
+For this project, we use integration tests by creating a `tests` directory at the project root level (same level as `src`). This approach is recommended when you already have unit tests in your `lib.rs` file and want to run tests independently.
+
+### Integration Test File Example
+
+```rust
+// tests/test_byName.rs
+pub fn add_two(a: i32) -> i32 {
+    a + 2
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn add_two_and_two() {
+        assert_eq!(4, add_two(2));
+    }
+
+    #[test]
+    fn add_three_and_two() {
+        assert_eq!(5, add_two(3));
+    }
+
+    #[test]
+    fn one_hundred() {
+        assert_eq!(102, add_two(100));
+    }
+}
+```
+
+## Running Tests by Name
+
+### Running Specific Integration Test Files
+
+To run a specific integration test file:
+
+```bash
+cargo test --test test_byName
+```
+
+This command runs all tests within the `test_byName.rs` file.
+
+### Running Single Test by Name
+
+To run a single specific test function:
+
+```bash
+cargo test --test test_byName add_two_and_two
+```
+
+![Running Single Test](img/test_by_name/run_single_test.png)
+
+This runs only the `add_two_and_two` test function from the `test_byName.rs` file.
+
+### Running Multiple Tests by Name Pattern
+
+If you want to run multiple tests that match a pattern (e.g., all tests starting with "add"):
+
+```bash
+cargo test --test test_byName add
+```
+
+![Running Multiple Tests by Pattern](img/test_by_name/run_multiple_test.png)
+
+This command runs both `add_two_and_two` and `add_three_and_two` tests because both contain "add" in their names.
+
+### Running Tests by Subset of Names
+
+You can pass test names as arguments to `cargo test`. Note that you can only pass one pattern argument, but it can match multiple tests:
+
+```bash
+# Run tests containing "two" in their names
+cargo test --test test_byName two
+
+# Run tests containing "hundred" in their names
+cargo test --test test_byName hundred
 ```
 
 ## Controlling Test Execution
@@ -142,6 +229,42 @@ After using the `--show-output` parameter:
 - Successful tests also display their `println!` output: "I got the value 6"
 - Failed tests continue to show output and error information
 
+## Test Selection Examples
+
+### Running All Tests in Project
+
+```bash
+cargo test
+```
+
+### Running Only Integration Tests
+
+```bash
+cargo test --test '*'
+```
+
+### Running Specific Integration Test File
+
+```bash
+cargo test --test test_byName
+```
+
+### Running Specific Test Function in Integration Test
+
+```bash
+cargo test --test test_byName add_two_and_two
+```
+
+### Running Tests by Name Pattern in Integration Test
+
+```bash
+# Run all tests containing "add" in the name
+cargo test --test test_byName add
+
+# Run all tests containing "two" in the name
+cargo test --test test_byName two
+```
+
 ## Practical Tips
 
 ### Debugging Tests
@@ -158,6 +281,9 @@ cargo test specific_test_name
 
 # Run tests from a specific module
 cargo test tests::module_name
+
+# Run specific integration test with pattern
+cargo test --test test_file_name pattern
 ```
 
 ### Ignoring Tests
@@ -178,6 +304,13 @@ cargo test -- --ignored
 cargo test -- --include-ignored
 ```
 
+## Important Notes About Integration Tests
+
+1. **No `#[cfg(test)]` needed**: Integration test files don't need the `#[cfg(test)]` attribute at the file level
+2. **Import your crate**: Use `use your_crate_name::*;` to import functions from your library
+3. **Independent execution**: Each integration test file is compiled as a separate crate
+4. **Public API only**: Integration tests can only access public APIs of your crate
+
 ## Summary
 
 Cargo's test control features provide flexible test execution options:
@@ -185,6 +318,8 @@ Cargo's test control features provide flexible test execution options:
 - Control test behavior through command-line arguments
 - Support both parallel and sequential execution modes
 - Selectively display test output
+- Run specific tests or test patterns by name
+- Support both unit tests and integration tests
 - Facilitate debugging and problem identification
 
-Proper use of these features can significantly improve testing efficiency and development experience.
+Proper use of these features can significantly improve testing efficiency and development experience. The integration test approach is particularly useful when you want to test your crate's public API in isolation from unit tests.
