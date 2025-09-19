@@ -2,32 +2,15 @@
 
 ## Project Structure
 
-```
-test_control/
-├── src/
-│   ├── lib.rs          # Main library file with test code
-│   └── main.rs         # Main program entry point
-├── tests/              # Integration tests directory
-│   └── test_byName.rs  # Integration test file
-├── img/                # Image resources directory
-│   ├── test_by_name/
-│   │    ├── run_multiple_test.png
-│   │    ├── run_single_test.png
-│   │    └── test_byName_rs.png
-│   ├── cargo_test____help.png
-│   ├── cargo_test__help.png
-│   ├── println!_notShow.png
-│   └── println!_show.png
-├── target/             # Build output directory
-├── Cargo.lock          # Dependency lock file
-└── Cargo.toml          # Project configuration file
-```
+![testControl_structure](./img/test_control_structure.png)
 
 ## Integration Tests Setup
 
 For this project, we use integration tests by creating a `tests` directory at the project root level (same level as `src`). This approach is recommended when you already have unit tests in your `lib.rs` file and want to run tests independently.
 
-### Integration Test File Example
+### Integration Test File Examples
+
+#### Basic Integration Test
 
 ```rust
 // tests/test_byName.rs
@@ -52,6 +35,25 @@ mod tests {
     #[test]
     fn one_hundred() {
         assert_eq!(102, add_two(100));
+    }
+}
+```
+
+#### Integration Test with Ignored Tests
+
+```rust
+// tests/test_ignore.rs
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn it_works() {
+        assert_eq!(4, 2 + 2);
+    }
+
+    #[test]
+    #[ignore]
+    fn expensive_test() {
+        assert_eq!(5, 1 + 1 + 1 + 1 + 1);
     }
 }
 ```
@@ -288,6 +290,8 @@ cargo test --test test_file_name pattern
 
 ### Ignoring Tests
 
+Sometimes you have tests that are time-consuming and you want to skip them during regular test runs to save time. You can use the `#[ignore]` attribute to mark these tests.
+
 ```rust
 #[test]
 #[ignore]
@@ -296,13 +300,70 @@ fn expensive_test() {
 }
 ```
 
-```bash
-# Run ignored tests
-cargo test -- --ignored
+#### Example: Test File with Ignored Tests
 
-# Run all tests (including ignored ones)
-cargo test -- --include-ignored
+```rust
+// tests/test_ignore.rs
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn it_works() {
+        assert_eq!(4, 2 + 2);
+    }
+
+    #[test]
+    #[ignore]
+    fn expensive_test() {
+        assert_eq!(5, 1 + 1 + 1 + 1 + 1);
+    }
+}
 ```
+
+#### Running Ignored Tests
+
+**Important Note**: The `--ignored` parameter must be placed **after** `--`, not directly after `cargo test`.
+
+```bash
+# ❌ Wrong: This will cause an error
+cargo test --test test_ignore --ignored
+
+# ✅ Correct: Run only ignored tests
+cargo test --test test_ignore -- --ignored
+
+# ✅ Run all tests including ignored ones
+cargo test --test test_ignore -- --include-ignored
+
+# ✅ Run only normal tests (default behavior)
+cargo test --test test_ignore
+```
+
+#### Test Execution Results
+
+When running normal tests (default behavior):
+![Normal Test Run](img/test_ignore/expensive_ignored.png)
+
+The output shows:
+
+- `it_works` test passes normally
+- `expensive_test` is ignored (not executed)
+- Result: "1 passed; 0 failed; 1 ignored"
+
+When running only ignored tests:
+![Running Ignored Tests](img/test_ignore/run_ignored.png)
+
+The output shows:
+
+- Only `expensive_test` is executed
+- `it_works` is filtered out
+- Result: "1 passed; 0 failed; 0 ignored; 1 filtered out"
+
+#### Time-Efficient Testing Strategy
+
+This approach allows for efficient time management:
+
+- **During development**: Skip time-consuming tests with default `cargo test`
+- **Before release**: Run all tests including ignored ones with `-- --include-ignored`
+- **Specific testing**: Run only expensive tests when needed with `-- --ignored`
 
 ## Important Notes About Integration Tests
 
