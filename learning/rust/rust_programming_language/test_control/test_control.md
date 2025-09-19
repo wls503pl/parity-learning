@@ -284,7 +284,7 @@ These arguments follow directly after `cargo test`:
 cargo test --help
 ```
 
-![Cargo Test Help](img/cargo_test__help.png)
+![Cargo Test Help](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/rust/rust_programming_language/test_control/img/cargo_test___help.png)
 
 ### Test Executable Arguments
 
@@ -294,7 +294,7 @@ These arguments need to be placed after `--`, passed directly to the test execut
 cargo test -- --help
 ```
 
-![Cargo Test Binary Help](img/cargo_test____help.png)
+![Cargo Test Binary Help](https://github.com/wls503pl/parity-learning/blob/outstanding_projects/learning/rust/rust_programming_language/test_control/img/cargo_test_______help.png)
 
 ## Parallel/Sequential Test Execution
 
