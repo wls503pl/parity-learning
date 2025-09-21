@@ -16,7 +16,11 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
         // The '?' operator does not panic when it encounters an error,
         // but returns the error value to the caller of the function so that it can handle it.
         fs::read_to_string(config.filename)?/*.expect("Something went wrong reading the file.")*/;
-    println!("With text:\n{}", contents);
+
+    for line in search(&config.query, &contents) {
+        println!("{}", line);
+    }
+
     Ok(()) // When no error occurs, it returns an 'Ok' variant with an empty tuple () as its internal value.
 }
 
@@ -45,5 +49,42 @@ impl Config {
 
         // Finally, 'Config' needs to be wrapped in the 'Ok' variant
         Ok(Config { query, filename })
+    }
+}
+
+pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    /*
+     * First, iterate over each row in 'contents' and check whether the current row contains the 'query' string.
+     * If it is included, put the entire line into the list of return values. If it is not included, continue to execute the loop search
+     * Finally, the matching rows, that is, the result list Vector, are returned.
+     *
+     * The 'contents' string is multi-line. To iterate line by line, you can use the 'lines' method,
+     * which returns an iterator that returns the contents line by line.
+     */
+
+    let mut results = Vec::new();
+
+    for line in contents.lines() {
+        if line.contains(query) {
+            results.push(line);
+        }
+    }
+
+    results
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*; // All external content needs to be imported
+
+    #[test]
+    fn one_result() {
+        let query = "duct";
+        let contents = "\
+Rust:
+safe, fast, productive.
+Pick three.";
+
+        assert_eq!(vec!["safe, fast, productive."], search(query, contents))
     }
 }
