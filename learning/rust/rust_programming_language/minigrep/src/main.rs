@@ -25,7 +25,7 @@ fn main() {
      * (a defined anonymous function: |err| is equivalent to the function's parameter, followed by the function body)
      */
     let config = Config::new(&args).unwrap_or_else(|err| {
-        println!("Problem parsing arguments: {}", err);
+        eprintln!("Problem parsing arguments: {}", err);
         /*
          * Call process::exit(1); The program execution will be terminated immediately, and the parameter '1' is the status code of the program exit
          * This error is handled in this way. The only error message is the one above, and then the program exits.
@@ -34,7 +34,7 @@ fn main() {
     });
 
     if let Err(e) = minigrep::run(config) {
-        println!("Application error: {}", e);
+        eprintln!("Application error: {}", e);
         process::exit(1);
     }
 }
