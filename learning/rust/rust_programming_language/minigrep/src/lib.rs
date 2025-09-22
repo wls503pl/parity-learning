@@ -2,6 +2,7 @@
  * Put the 'run' function, 'Config' structure and the 'new' function associated with 'Config' into the lib.rs file
  * Note: Functions, structures and their internal fields must be pub
  */
+use std::env;
 use std::error::Error;
 use std::fs;
 
@@ -17,7 +18,13 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
         // but returns the error value to the caller of the function so that it can handle it.
         fs::read_to_string(config.filename)?/*.expect("Something went wrong reading the file.")*/;
 
-    for line in search(&config.query, &contents) {
+    let results = if config.case_sensitive {
+        search(&config.query, &contents)
+    } else {
+        search_case_insensitive(&config.query, &contents)
+    };
+
+    for line in results {
         println!("{}", line);
     }
 
@@ -27,6 +34,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 pub struct Config {
     pub query: String,
     pub filename: String,
+    pub case_sensitive: bool,
 }
 
 impl Config {
@@ -46,9 +54,24 @@ impl Config {
 
         let query = args[1].clone();
         let filename = args[2].clone();
+        /*
+         * 'case_sensitive' from environment variables
+         * Whenever the 'CASE_INSENSITIVE' environment variable appears, it is considered case-insensitive.
+         * The result of env::var() is a Result, if the environment variable 'CASE_INSENSITIVE' is set,
+         * then the result is wrapped in the 'Ok' variant or return an Err variant.
+         * Here you only need to use the is_err method to check whether the Result has an error.
+         * If this environment variable appears, no error will occur.
+         * The result of the entire expression is false. Here we don’t care about the value of the environment variable,
+         * we only care about whether it appears. There is no need to use 'unwrap' or 'expect' or other methods to get the value out
+         */
+        let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
 
         // Finally, 'Config' needs to be wrapped in the 'Ok' variant
-        Ok(Config { query, filename })
+        Ok(Config {
+            query,
+            filename,
+            case_sensitive,
+        })
     }
 }
 
@@ -73,18 +96,50 @@ pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     results
 }
 
+pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    /*
+     * To perform case-insensitive operations, convert the search string and the search content to lowercase.
+     */
+    let mut results = Vec::new();
+    let query = query.to_lowercase();
+
+    for line in contents.lines() {
+        if line.to_lowercase().contains(&query) {
+            results.push(line);
+        }
+    }
+
+    results
+}
+
 #[cfg(test)]
 mod tests {
     use super::*; // All external content needs to be imported
 
     #[test]
-    fn one_result() {
+    fn case_sensitive() {
         let query = "duct";
         let contents = "\
 Rust:
 safe, fast, productive.
-Pick three.";
+Pick three.
+Duct tape."; // Add 'Duct' with a capital letter to make it case-sensitive.
 
         assert_eq!(vec!["safe, fast, productive."], search(query, contents))
+    }
+
+    #[test]
+    fn case_insensitive() {
+        let query = "rUsT";
+        let contents = "\
+Rust:
+safe, fast, productive.
+Pick three.
+Trust me.";
+
+        assert_eq!(
+            vec!["Rust:", "Trust me."],
+            search_case_insensitive(query, contents)
+        )
     }
 }
