@@ -27,6 +27,7 @@ This repository documents a systematic journey through **THE RUST PROGRAMMING LA
 - **Structs** - Group related data with methods
 - **Enums** - Handle different types safely (especially `Option<T>`)
 - **Pattern Matching** - Control flow with `match` and `if let`
+- **Projects:** `struct_example/`, `enum_/`, `match_control/`
 
 ### **Phase 2: Core Rust Concepts** ✅
 
@@ -35,6 +36,7 @@ This repository documents a systematic journey through **THE RUST PROGRAMMING LA
 - Move semantics and borrowing rules
 - References and string slices
 - **Why it matters:** Memory safety without garbage collection
+- **Project:** `ownership/`
 
 #### 5. **Collections**
 
@@ -42,12 +44,14 @@ This repository documents a systematic journey through **THE RUST PROGRAMMING LA
 - **String** - Text handling with UTF-8
 - **HashMap** - Key-value storage
 - Store different types using enums in collections
+- **Project:** `common_collections/`
 
 #### 6. **Module System**
 
 - Organize code into packages and modules
-- Control privacy and imports
+- Control privacy and imports with `use` keyword
 - **Essential for:** Building larger applications
+- **Projects:** `Package/`, `use_keywords/`
 
 ### **Phase 3: Error Handling** ✅
 
@@ -56,6 +60,7 @@ This repository documents a systematic journey through **THE RUST PROGRAMMING LA
 - When to use `panic!` vs recoverable errors
 - Debugging with backtraces
 - **Production consideration:** Configure panic behavior
+- **Project:** `panic/`
 
 #### 8. **Recoverable Errors**
 
@@ -63,6 +68,7 @@ This repository documents a systematic journey through **THE RUST PROGRAMMING LA
 - `unwrap()`, `expect()`, and proper error handling
 - **Question Mark Operator (`?`)** - Clean error propagation
 - **Critical skill:** Most Rust APIs use `Result`
+- **Project:** `Result_recoverable_errors/`
 
 ### **Phase 4: Generic Programming** ✅
 
@@ -102,9 +108,20 @@ This repository documents a systematic journey through **THE RUST PROGRAMMING LA
 - **Static Lifetime (`'static`)** - References valid for entire program duration
 - **Project:** `LifeTime/`
 
-### **Phase 5: Testing and Quality Assurance** ✅
+### **Phase 5: Functional Programming** ✅
 
-#### 13. **Writing and Running Tests**
+#### 13. **Closures** (Anonymous Functions)
+
+- **Environment Capture** - Access variables from surrounding scope
+- **Fn Traits** - `Fn`, `FnMut`, `FnOnce` for different usage patterns
+- **Caching with Closures** - Memoization using generic parameters and trait bounds
+- **Move Semantics** - Force ownership transfer with `move` keyword
+- **Type Inference** - Automatic parameter and return type detection
+- **Project:** `closures/`
+
+### **Phase 6: Testing and Quality Assurance** ✅
+
+#### 14. **Writing and Running Tests**
 
 - **Test Functions** - Use `#[test]` attribute for test annotations
 - **Test Organization** - Unit tests in `src/`, integration tests in `tests/`
@@ -112,13 +129,26 @@ This repository documents a systematic journey through **THE RUST PROGRAMMING LA
 - **Test Execution** - Independent threads and failure detection
 - **Project:** `adder/`
 
-#### 14. **Advanced Testing Techniques**
+#### 15. **Advanced Testing Techniques**
 
 - **Assert Macros** - `assert!`, `assert_eq!`, `assert_ne!` for different validation needs
 - **Custom Error Messages** - Descriptive failure messages for better debugging
 - **Result-Based Tests** - Return `Result<(), E>` for graceful error handling
 - **Panic Testing** - Use `#[should_panic]` with `expected` parameter
 - **Integration Testing** - Cross-module testing with `use super::*`
+- **Test Control** - Parallel execution, output display, and selective test running
+- **Project:** `test_control/`
+
+### **Phase 7: Real-World Application** ✅
+
+#### 16. **Command Line Applications**
+
+- **Argument Processing** - Command line parsing and validation
+- **File I/O Operations** - Reading and writing files safely
+- **Environment Variables** - Configuration through environment settings
+- **Error Output Separation** - stdout vs stderr for proper shell integration
+- **Test-Driven Development** - TDD methodology with comprehensive test coverage
+- **Project:** `minigrep/` (Complete grep-like utility)
 
 ---
 
@@ -140,11 +170,13 @@ cd guessing_game && cargo run
 
 # Phase 2: Core concepts
 cd struct_example && cargo run
+cd enum_ && cargo run --bin enum_option
+cd match_control && cargo run
 cd ownership && cargo run  # Spend extra time here
 cd common_collections/Vector && cargo run
 
 # Phase 3: Error handling (essential)
-cd panic_handling && RUST_BACKTRACE=1 cargo run
+cd panic && RUST_BACKTRACE=1 cargo run
 cd Result_recoverable_errors && cargo run --bin Result_1
 
 # Phase 4: Generic programming
@@ -153,10 +185,21 @@ cd Trait && cargo run --bin trait_1
 cd Trait2 && cargo run --bin impl_trait_syntax
 cd LifeTime && cargo run --bin lifetime_1
 
-# Phase 5: Testing (quality assurance)
+# Phase 5: Functional programming
+cd closures && cargo run --bin closure_1
+
+# Phase 6: Testing (quality assurance)
 cd adder && cargo test
 cd adder && cargo test --test test_assert
-cd adder && RUST_BACKTRACE=1 cargo test should_panic
+cd test_control && cargo test --test test_byName
+
+# Phase 7: Real-world application
+cd minigrep && cargo run body poem.txt
+cd minigrep && CASE_INSENSITIVE=1 cargo run to poem.txt
+
+# Module system and organization
+cd Package && cargo run
+cd use_keywords && cargo run --bin use_kword
 ```
 
 ### **Learning Strategy**
@@ -167,7 +210,9 @@ cd adder && RUST_BACKTRACE=1 cargo test should_panic
 4. **Practice error handling** - Most real code needs this
 5. **Master traits gradually** - Basic traits first, then advanced patterns
 6. **Understand lifetimes deeply** - Critical for complex reference patterns
-7. **Write comprehensive tests** - Ensure code correctness and maintainability
+7. **Apply closures practically** - Environment capture and caching patterns
+8. **Write comprehensive tests** - Ensure code correctness and maintainability
+9. **Build complete applications** - Apply concepts in real projects
 
 ---
 
@@ -212,6 +257,13 @@ cd adder && RUST_BACKTRACE=1 cargo test should_panic
 - Design structs with borrowed data safely
 - Master automatic lifetime inference rules
 
+### **Functional Programming**
+
+- Use closures for flexible code patterns
+- Implement caching and memoization
+- Handle environment capture safely
+- Choose appropriate Fn traits for performance
+
 ### **Testing Proficiency**
 
 - Write comprehensive unit and integration tests
@@ -220,23 +272,32 @@ cd adder && RUST_BACKTRACE=1 cargo test should_panic
 - Debug test failures with meaningful error messages
 - Organize tests for maintainable codebases
 
+### **Real-World Development**
+
+- Build command-line applications
+- Handle file I/O and environment variables
+- Apply test-driven development methodology
+- Structure code for team collaboration
+
 ---
 
 ## 📊 Progress Tracking
 
-| Skill                       | Importance | Status      |
-| --------------------------- | ---------- | ----------- |
-| **Basic Syntax**            | Essential  | ✅ Complete |
-| **Ownership System**        | Critical   | ✅ Complete |
-| **Pattern Matching**        | Important  | ✅ Complete |
-| **Collections**             | Important  | ✅ Complete |
-| **Error Handling**          | Essential  | ✅ Complete |
-| **Module System**           | Important  | ✅ Complete |
-| **Generic Types**           | Important  | ✅ Complete |
-| **Basic Traits**            | Important  | ✅ Complete |
-| **Advanced Trait Patterns** | Important  | ✅ Complete |
-| **Lifetimes**               | Critical   | ✅ Complete |
-| **Testing Framework**       | Essential  | ✅ Complete |
+| Skill                         | Importance | Status      |
+| ----------------------------- | ---------- | ----------- |
+| **Basic Syntax**              | Essential  | ✅ Complete |
+| **Ownership System**          | Critical   | ✅ Complete |
+| **Pattern Matching**          | Important  | ✅ Complete |
+| **Collections**               | Important  | ✅ Complete |
+| **Error Handling**            | Essential  | ✅ Complete |
+| **Module System**             | Important  | ✅ Complete |
+| **Generic Types**             | Important  | ✅ Complete |
+| **Basic Traits**              | Important  | ✅ Complete |
+| **Advanced Trait Patterns**   | Important  | ✅ Complete |
+| **Lifetimes**                 | Critical   | ✅ Complete |
+| **Closures**                  | Important  | ✅ Complete |
+| **Testing Framework**         | Essential  | ✅ Complete |
+| **Command Line Applications** | Important  | ✅ Complete |
 
 ## 💡 Tips for Success
 
@@ -248,6 +309,7 @@ cd adder && RUST_BACKTRACE=1 cargo test should_panic
 - **Generic constraints** - Understanding when and how to use trait bounds
 - **Trait complexity** - Start with simple traits before advanced patterns
 - **Lifetime annotations** - Practice with function signatures and struct definitions
+- **Closure environment capture** - Understand memory implications and Fn traits
 - **Test organization** - Balance unit tests vs integration tests
 
 ### **Best Practices Learned**
@@ -262,6 +324,8 @@ cd adder && RUST_BACKTRACE=1 cargo test should_panic
 - Choose static dispatch (`impl Trait`) over dynamic (`Box<dyn Trait>`) when possible
 - Rely on lifetime elision rules when possible, annotate explicitly when needed
 - Avoid `'static` lifetime unless truly necessary
+- Use closures for caching expensive operations
+- Separate stdout and stderr in command-line applications
 - Write tests with descriptive names and custom error messages
 - Test independence ensures reliable test suites
 
@@ -280,17 +344,18 @@ cd adder && RUST_BACKTRACE=1 cargo test should_panic
 
 ## 📈 Learning Statistics
 
-**Time Investment:** 140+ hours hands-on practice  
-**Code Examples:** 65+ working implementations  
-**Core Concepts Mastered:** 25+ fundamental Rust patterns  
-**Test Files:** 10+ comprehensive testing examples
+**Time Investment:** 160+ hours hands-on practice  
+**Code Examples:** 80+ working implementations  
+**Core Concepts Mastered:** 35+ fundamental Rust patterns  
+**Test Files:** 15+ comprehensive testing examples  
+**Complete Projects:** 3+ real-world applications
 
 ---
 
 ## 👨‍💻 Author
 
 **Peile Wu** (peile.wu.1990@gmail.com)  
-_Updated: September 16, 2025_
+_Updated: September 23, 2025_
 
 ---
 
