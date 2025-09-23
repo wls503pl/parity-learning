@@ -6,7 +6,7 @@
 
 ## Overview
 
-Closures are one of Rust's functional programming features that significantly influence the language design. This document introduces closures through practical examples and demonstrates their usage in real code.
+Closures are one of Rust's functional programming features that significantly influence the language design. This document introduces closures through practical examples and demonstrates their usage in real code, including advanced patterns like memoization using generic parameters and Fn traits.
 
 ## What are Closures?
 
@@ -39,108 +39,188 @@ Rust's functional programming features include:
 2. **Higher-order functions** - functions that return other functions
 3. **Variable assignment** - storing functions in variables for later execution
 
-## Practical Example: Workout Generator
+## Storing Closures with Generic Parameters and Fn Traits
 
-Let's examine a practical implementation using closures:
+### Creating a Struct that Holds Closures and Caches Results
 
-### Execution Output
+One powerful pattern is creating a structure that holds a closure and caches its execution result. This implements:
 
-![Closure Execution Result](img/using_closure.png)
+- **Lazy evaluation**: Only executes the closure when needed (first call)
+- **Memoization**: Caches the result for future use
+- **Performance optimization**: Expensive calculations run only once
 
-The program execution demonstrates the closure in action with the following output showing the simulated expensive calculations being performed.
+### The Challenge: How to Let Struct Hold Closures
 
-### Implementation Analysis
+When defining a struct, we need to know all field types, but closures present unique challenges:
+
+- Each closure instance has its own **unique anonymous type**
+- Even closures with identical signatures have different types
+- Solution: Use **generic parameters** and **trait bounds**
+
+### Fn Traits Overview
+
+The standard library provides Fn traits that all closures implement at least one of:
+
+- **`Fn`**: Can be called multiple times without mutating captured values
+- **`FnMut`**: Can be called multiple times and may mutate captured values
+- **`FnOnce`**: Can be called only once, may consume captured values
+
+### Cacher Implementation Example
 
 ```rust
-fn generate_workout(intensity: u32, random_number: u32) {
-    // Closure definition: anonymous function stored in a variable
-    let expensive_closure = |num| {
-        println!("calculating slowly ...");
-        thread::sleep(Duration::from_secs(2));
-        num
-    };
+struct Cacher<T>
+where
+    T: Fn(u32) -> u32,
+{
+    calculation: T,        // The closure to cache
+    value: Option<u32>,    // Cached result (None before first execution)
+}
 
-    // Closure usage in conditional logic
-    if intensity < 25 {
-        println!("Today, do {} pushups!", expensive_closure(intensity));
-        println!("Next, do {} situps!", expensive_closure(intensity));
-    } else {
-        if random_number == 3 {
-            println!("Take a break today! Remember to stay hydrated!");
-        } else {
-            println!("Today, run for {} minutes!", expensive_closure(intensity));
+impl<T> Cacher<T>
+where
+    T: Fn(u32) -> u32,
+{
+    fn new(calculation: T) -> Cacher<T> {
+        Cacher {
+            calculation,
+            value: None,
+        }
+    }
+
+    fn value(&mut self, arg: u32) -> u32 {
+        match self.value {
+            Some(v) => v,     // Return cached value if available
+            None => {
+                // Execute closure, cache and return result
+                let v = (self.calculation)(arg);
+                self.value = Some(v);
+                v
+            }
         }
     }
 }
 ```
 
-### Key Implementation Points
+### How the Caching Works
 
-1. **Closure Syntax**: `|num| { /* body */ }` - parameters between pipes `|`
-2. **Variable Storage**: `let expensive_closure = |num| {...};` - stored as a variable
-3. **Reusability**: The same closure is called multiple times with different contexts
-4. **Statement Termination**: Closure definition ends with semicolon as it's a statement
+1. **Initial State**: `value` field is `None` before any execution
+2. **First Call**: Execute the closure, store result in `value` field as `Some(result)`
+3. **Subsequent Calls**: Return cached value directly without re-executing closure
+4. **Performance Benefit**: Expensive calculation runs only once regardless of how many times `value()` is called
 
-### Runtime Execution
+## Practical Example: Workout Generator with Caching
 
-The program demonstrates closure behavior through simulated expensive calculations:
-
-- **Input Parameters**: `intensity = 10`, `random_number = 7`
-- **Execution Flow**: Since intensity < 25, both pushup and situp calculations execute
-- **Output**: Each closure call triggers the 2-second delay simulation
-
-## Closure Type Inference
-
-### Key Differences from Functions
-
-Unlike functions defined with `fn`, closures do **not require explicit type annotations** for parameters and return values. This design difference exists because:
-
-- **Functions** are part of explicit public interfaces exposed to users
-- **Closures** are stored in variables and used in narrow contexts without being exposed to library users
-- **Compiler inference** works well for closures due to their typically short and contextual nature
-
-### Manual Type Annotations (Optional)
-
-You can still manually add type annotations when needed:
+### Updated Implementation
 
 ```rust
-let expensive_closure = |num: u32| -> u32 {
-    println!("calculating slowly ...");
-    thread::sleep(Duration::from_secs(2));
-    num
-};
-```
+fn generate_workout(intensity: u32, random_number: u32) {
+    // Create a caching closure that only runs expensive calculation once
+    let mut expensive_closure = Cacher::new(|num| {
+        println!("calculating slowly ...");
+        thread::sleep(Duration::from_secs(2));
+        num
+    });
 
-### Function vs Closure Syntax Comparison
+    if intensity < 25 {
+        println!(
+            "Today, do {} pushups!",
+            expensive_closure.value(intensity)  // First call: executes closure
+        );
 
-**Function Definition:**
-
-```rust
-fn add_one_v1(x: u32) -> u32 { x + 1 }  // Explicit parameter and return types
-```
-
-**Closure Variations:**
-
-```rust
-let add_one_v2 = |x: u32| -> u32 { x + 1 };  // Explicit types
-let add_one_v3 = |x| { x + 1 };              // Inferred types
-let add_one_v4 = |x| x + 1;                  // Single expression, no braces
-```
-
-### Type Inference Behavior
-
-**Important**: Closures eventually infer **only one specific type** for parameters and return values:
-
-```rust
-fn main() {
-    let example_closure = |x| x;  // No concrete type yet - compiler error
-
-    // let s = example_closure(String::from("hello"));  // First use determines type
-    // let n = example_closure(5);  // Error: type mismatch with previous inference
+        println!(
+            "Next, do {} situps!",
+            expensive_closure.value(intensity)   // Second call: uses cached result
+        );
+    } else {
+        if random_number == 3 {
+            println!("Take a break today! Remember to stay hydrated!");
+        } else {
+            println!(
+                "Today, run for {} minutes!",
+                expensive_closure.value(intensity)
+            );
+        }
+    }
 }
 ```
 
-Once a closure is used with a specific type, the compiler locks in that type for all future uses.
+### Execution Output
+
+![Closure Execution Result](img/using_closure.png)
+
+The program execution demonstrates the caching behavior - notice that "calculating slowly ..." appears only once even though the closure result is used multiple times.
+
+### Key Improvements Over Basic Closure
+
+| Aspect              | Basic Closure                   | Cached Closure                       |
+| ------------------- | ------------------------------- | ------------------------------------ |
+| **Execution Count** | Runs every time it's called     | Runs only on first call              |
+| **Performance**     | Repeated expensive calculations | One-time calculation, cached results |
+| **Memory Usage**    | No state storage                | Minimal state for caching            |
+| **Use Case**        | Simple, cheap operations        | Expensive, deterministic operations  |
+
+## Cacher Implementation Limitations
+
+### Current Limitations
+
+1. **Single Parameter Assumption**: The current `Cacher` assumes the same input will always produce the same output
+2. **Type Constraints**: Only accepts `u32` parameter and returns `u32` value
+
+### Potential Improvements
+
+#### 1. Multiple Parameter Support with HashMap
+
+Instead of caching a single value, use a HashMap to cache results for different inputs:
+
+```rust
+use std::collections::HashMap;
+
+struct Cacher<T>
+where
+    T: Fn(u32) -> u32,
+{
+    calculation: T,
+    values: HashMap<u32, u32>,  // key: input arg, value: result
+}
+
+impl<T> Cacher<T>
+where
+    T: Fn(u32) -> u32,
+{
+    fn value(&mut self, arg: u32) -> u32 {
+        match self.values.get(&arg) {
+            Some(&result) => result,
+            None => {
+                let result = (self.calculation)(arg);
+                self.values.insert(arg, result);
+                result
+            }
+        }
+    }
+}
+```
+
+#### 2. Generic Type Parameters for Flexibility
+
+Support different parameter and return types using multiple generic parameters:
+
+```rust
+struct Cacher<T, P, R>
+where
+    T: Fn(P) -> R,
+    P: Copy + Eq + std::hash::Hash,
+    R: Copy,
+{
+    calculation: T,
+    values: HashMap<P, R>,
+}
+```
+
+This allows closures like:
+
+- `|x: String| -> usize { x.len() }`
+- `|x: f64| -> f64 { x * x }`
+- `|x: &str| -> String { x.to_uppercase() }`
 
 ## Closure Type Inference
 
@@ -197,27 +277,49 @@ Once a closure is used with a specific type, the compiler locks in that type for
 
 ## Closure vs Regular Functions
 
-| Aspect           | Regular Function                          | Closure                      |
-| ---------------- | ----------------------------------------- | ---------------------------- |
-| **Name**         | Named (`simulated_expensive_calculation`) | Anonymous                    |
-| **Definition**   | `fn name() {}`                            | `\|params\| {}`              |
-| **Scope Access** | Limited to parameters                     | Can capture environment      |
-| **Storage**      | Cannot be stored in variables directly    | Can be assigned to variables |
+| Aspect           | Regular Function                          | Closure                       |
+| ---------------- | ----------------------------------------- | ----------------------------- |
+| **Name**         | Named (`simulated_expensive_calculation`) | Anonymous                     |
+| **Definition**   | `fn name() {}`                            | `\|params\| {}`               |
+| **Scope Access** | Limited to parameters                     | Can capture environment       |
+| **Storage**      | Cannot be stored in variables directly    | Can be assigned to variables  |
+| **Caching**      | Manual implementation required            | Easy integration with structs |
 
-## Benefits in This Example
+## Advanced Patterns and Use Cases
 
-1. **Code Reusability**: Single closure definition used multiple times
-2. **Maintainability**: Changes to expensive calculation logic in one place
-3. **Flexibility**: Easy to modify or replace the closure implementation
-4. **Performance Consistency**: Same calculation method across all calls
+### 1. Memoization Pattern
+
+Perfect for expensive calculations that may be called multiple times with the same inputs.
+
+### 2. Lazy Evaluation
+
+Defer computation until actually needed, improving performance for conditional code paths.
+
+### 3. Configuration Closures
+
+Store configuration logic that can be applied consistently across different contexts.
+
+### 4. Event Handlers
+
+Cache callback functions that respond to events without re-creating handler logic.
+
+## Benefits of Cached Closures
+
+1. **Performance Optimization**: Expensive operations execute only once
+2. **Memory Efficiency**: Store results rather than recompute
+3. **Code Reusability**: Same caching pattern works across different closure types
+4. **Maintainability**: Centralized caching logic in reusable struct
+5. **Type Safety**: Compile-time guarantees through generic constraints
 
 ## Conclusion
 
-Closures provide a powerful way to write more functional and flexible Rust code. They enable:
+Closures provide a powerful way to write more functional and flexible Rust code. The combination of closures with generic parameters and Fn traits enables sophisticated patterns like memoization and lazy evaluation. Key takeaways:
 
 - **Environment capture** for accessing surrounding scope
 - **Anonymous function definition** for inline logic
 - **Variable storage** for reusable function objects
-- **Cross-context execution** for flexible program flow
+- **Caching capabilities** through struct-based memoization
+- **Type flexibility** via generic parameters and trait bounds
+- **Performance benefits** from lazy evaluation patterns
 
-This workout generator example demonstrates how closures can replace traditional function calls while providing additional flexibility and maintaining clean, readable code structure.
+The evolution from basic closures to cached implementations demonstrates Rust's power in combining functional programming concepts with systems-level performance optimizations. This makes closures not just syntactic conveniences, but fundamental tools for building efficient, maintainable applications.
