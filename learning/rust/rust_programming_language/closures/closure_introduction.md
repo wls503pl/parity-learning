@@ -311,15 +311,295 @@ Cache callback functions that respond to events without re-creating handler logi
 4. **Maintainability**: Centralized caching logic in reusable struct
 5. **Type Safety**: Compile-time guarantees through generic constraints
 
-## Conclusion
+# Part I: Basic Closure Concepts and Caching
 
-Closures provide a powerful way to write more functional and flexible Rust code. The combination of closures with generic parameters and Fn traits enables sophisticated patterns like memoization and lazy evaluation. Key takeaways:
+## Conclusion of Part I
 
-- **Environment capture** for accessing surrounding scope
+The first part covered fundamental closure concepts and advanced caching patterns. Key takeaways:
+
 - **Anonymous function definition** for inline logic
 - **Variable storage** for reusable function objects
 - **Caching capabilities** through struct-based memoization
 - **Type flexibility** via generic parameters and trait bounds
 - **Performance benefits** from lazy evaluation patterns
 
-The evolution from basic closures to cached implementations demonstrates Rust's power in combining functional programming concepts with systems-level performance optimizations. This makes closures not just syntactic conveniences, but fundamental tools for building efficient, maintainable applications.
+---
+
+# Part II: Environment Capture and Ownership
+
+## Closures Can Capture Their Environment
+
+One of the most powerful features of closures is their ability to **capture values from their surrounding environment**, which regular functions cannot do.
+
+### Environment Capture vs Regular Functions
+
+```rust
+fn main() {
+    let x = 4;
+
+    // ✅ Closure can capture variable x from surrounding scope
+    let equal_to_x = |z| z == x;
+
+    /* ❌ Regular function cannot capture external variables
+    fn equal_to_x(z: i32) -> bool {
+        z == x  // Error: can't capture dynamic environment
+    }
+    */
+
+    let y = 4;
+    assert!(equal_to_x(y));
+}
+```
+
+### Compiler Suggestion for Environment Capture
+
+When you try to capture environment variables in regular functions, Rust suggests using closures:
+
+![Function Environment Capture Error](img/func_capture_error.png)
+
+The compiler error `E0434: can't capture dynamic environment in fn item` clearly indicates that regular functions cannot access external variables, and suggests using closure syntax `|| { ... }` instead.
+
+### Memory Overhead of Environment Capture
+
+**Important consideration**: Closures that capture environment variables incur **memory overhead** for storing captured values.
+
+In most cases, we don't want to capture the environment to avoid this additional overhead. However, when environment capture is needed, closures provide the necessary functionality.
+
+## Three Ways Closures Capture Environment Values
+
+Closures capture values using the same three ownership patterns as function parameters:
+
+### 1. Taking Ownership: `FnOnce`
+
+- **Trait**: `FnOnce`
+- **Behavior**: Closure consumes captured variables from the defining scope
+- **Usage**: Variables are moved into the closure and cannot be used afterward
+- **Calling**: Can only be called once (hence "Once")
+
+### 2. Mutable Borrowing: `FnMut`
+
+- **Trait**: `FnMut`
+- **Behavior**: Closure mutably borrows values from environment
+- **Usage**: Can modify captured variables
+- **Calling**: Can be called multiple times
+
+### 3. Immutable Borrowing: `Fn`
+
+- **Trait**: `Fn`
+- **Behavior**: Closure immutably borrows values from environment
+- **Usage**: Can read but not modify captured variables
+- **Calling**: Can be called multiple times without restrictions
+
+## Automatic Trait Implementation
+
+Rust automatically determines which trait a closure implements based on how it uses captured values:
+
+### Implementation Hierarchy
+
+```
+FnOnce ← FnMut ← Fn
+  ↑       ↑      ↑
+ All   Most    Some
+```
+
+- **All closures implement `FnOnce`** (every closure can be called at least once)
+- **Closures that don't move captured variables implement `FnMut`**
+- **Closures that don't need mutable access implement `Fn`**
+
+### Trait Relationship
+
+The traits have a hierarchical relationship:
+
+- Closures implementing `Fn` also implement `FnMut`
+- Closures implementing `FnMut` also implement `FnOnce`
+- This allows flexible usage in different contexts
+
+## The `move` Keyword
+
+### Forcing Ownership Transfer
+
+Use the `move` keyword before parameter list to force the closure to take ownership of captured values:
+
+```rust
+fn main() {
+    let x = vec![1, 2, 3];
+
+    // move keyword forces ownership transfer
+    let equal_to_x = move |z| z == x;
+
+    // ❌ Error: x has been moved into closure
+    println!("Can't use x here: {:?}", x);
+
+    let y = vec![1, 2, 3];
+    assert!(equal_to_x(y));
+}
+```
+
+### Compilation Error with `move`
+
+![Move Ownership Error](img/move_forces_ownership.png)
+
+After using `move`, the variable `x` is moved into the closure, making it unavailable for use outside the closure. This results in a "value borrowed here after move" error.
+
+### When to Use `move`
+
+The `move` keyword is most useful when:
+
+1. **Passing closures to new threads** - ensures data ownership transfers to the new thread
+2. **Ensuring data lives as long as the closure** - prevents dangling references
+3. **Explicit ownership control** - when you want to be clear about ownership transfer
+
+### Example: Thread Usage
+
+```rust
+use std::thread;
+
+fn main() {
+    let data = vec![1, 2, 3];
+
+    // move ensures data is owned by the new thread
+    let handle = thread::spawn(move || {
+        println!("Data in thread: {:?}", data);
+    });
+
+    handle.join().unwrap();
+    // data is no longer accessible here
+}
+```
+
+## Closure Environment Capture Examples
+
+### Example 1: Immutable Borrowing (`Fn`)
+
+```rust
+fn main() {
+    let x = 4;
+    let equal_to_x = |z| z == x;  // Implements Fn
+
+    println!("x is still available: {}", x);  // ✅ Works
+    assert!(equal_to_x(4));  // Can call multiple times
+    assert!(equal_to_x(4));  // ✅ Still works
+}
+```
+
+### Example 2: Mutable Borrowing (`FnMut`)
+
+```rust
+fn main() {
+    let mut x = 0;
+    let mut increment = || {  // Implements FnMut
+        x += 1;
+        x
+    };
+
+    println!("First call: {}", increment());   // Output: 1
+    println!("Second call: {}", increment());  // Output: 2
+    println!("x is: {}", x);                   // Output: 2
+}
+```
+
+### Example 3: Taking Ownership (`FnOnce`)
+
+```rust
+fn main() {
+    let x = vec![1, 2, 3];
+    let consume_x = || {  // Implements FnOnce
+        drop(x);  // Takes ownership and drops x
+    };
+
+    consume_x();  // Can only call once
+    // consume_x();  // ❌ Error: closure has been moved
+}
+```
+
+## Best Practices for Fn Trait Bounds
+
+### Recommended Approach
+
+**Start with `Fn`**: When specifying trait bounds for closure parameters, begin with the most restrictive trait (`Fn`):
+
+```rust
+fn call_closure<F>(closure: F)
+where
+    F: Fn()  // Start with Fn
+{
+    closure();
+    closure();  // Can call multiple times
+}
+```
+
+### Compiler-Guided Refinement
+
+If your closure needs more capabilities, the compiler will guide you:
+
+1. **Start with `Fn`** - most restrictive, allows multiple calls without mutation
+2. **Compiler suggests `FnMut`** - if closure needs to mutate captured values
+3. **Compiler suggests `FnOnce`** - if closure consumes captured values
+
+### Progressive Example
+
+```rust
+// 1. Start with Fn
+fn process_data<F>(mut f: F)
+where
+    F: Fn() -> i32  // Compiler may suggest FnMut if needed
+{
+    let result1 = f();
+    let result2 = f();  // Multiple calls require Fn or FnMut
+}
+
+// 2. If mutation needed, use FnMut
+fn process_data_mut<F>(mut f: F)
+where
+    F: FnMut() -> i32  // Allows mutation
+{
+    let result1 = f();
+    let result2 = f();
+}
+
+// 3. If consumption needed, use FnOnce
+fn process_data_once<F>(f: F)
+where
+    F: FnOnce() -> i32  // Single use only
+{
+    let result = f();  // Can only call once
+}
+```
+
+## Environment Capture vs Performance Trade-offs
+
+| Capture Type                 | Memory Overhead            | Performance | Use Case                     |
+| ---------------------------- | -------------------------- | ----------- | ---------------------------- |
+| **No Capture**               | None                       | Fastest     | Pure calculations            |
+| **Immutable Borrow (`Fn`)**  | Reference only             | Fast        | Read-only access             |
+| **Mutable Borrow (`FnMut`)** | Reference + mut capability | Moderate    | Stateful operations          |
+| **Move (`FnOnce`)**          | Full ownership             | Variable    | Thread transfer, consumption |
+
+## Part II Summary
+
+Environment capture is a powerful feature that distinguishes closures from regular functions:
+
+- **Environment Access**: Closures can capture surrounding scope variables
+- **Memory Trade-offs**: Environment capture incurs memory overhead
+- **Ownership Patterns**: Three capture modes mirror function parameter patterns
+- **Automatic Inference**: Rust determines appropriate trait based on usage
+- **Move Keyword**: Forces ownership transfer for thread safety and explicit control
+- **Best Practice**: Start with `Fn` and let compiler guide refinements
+
+---
+
+# Overall Conclusion
+
+Closures provide a powerful way to write more functional and flexible Rust code. The evolution from basic closures to cached implementations and environment capture demonstrates Rust's power in combining functional programming concepts with systems-level performance optimizations.
+
+## Complete Feature Set
+
+- **Basic anonymous functions** for inline logic
+- **Caching capabilities** through struct-based memoization
+- **Environment capture** for accessing surrounding scope
+- **Ownership control** through Fn trait hierarchy
+- **Thread safety** with move semantics
+- **Type flexibility** via generic parameters and trait bounds
+- **Performance benefits** from lazy evaluation patterns
+
+This makes closures not just syntactic conveniences, but fundamental tools for building efficient, maintainable applications that can handle complex ownership scenarios while maintaining performance.

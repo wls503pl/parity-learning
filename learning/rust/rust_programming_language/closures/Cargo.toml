@@ -7,5 +7,9 @@ default-run = "closures"
 [dependencies]
 
 [[bin]]
-name = "closure_type"
+name = "ct"
 path = "./src/closure_type.rs"
+
+[[bin]]
+name = "ce"
+path = "./src/capturing_env.rs"
