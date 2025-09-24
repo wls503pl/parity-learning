@@ -219,3 +219,108 @@ let result: Vec<_> = numbers
 ```
 
 This approach provides both performance benefits through lazy evaluation and improved code readability through expressive method chaining.
+
+## Part 3: Using Closures to Capture Environment
+
+### The `filter` Method
+
+The `filter` method is an iterator adaptor that demonstrates a common use case of closures capturing their environment. This method is particularly useful for conditional filtering based on external variables.
+
+The `filter` method:
+
+- Takes a closure as a parameter
+- The closure returns a `bool` type when traversing each element of the iterator
+- If the closure returns `true`: the current element will be included in the iterator produced by the `filter` method
+- If the closure returns `false`: the current element will not be included in the filtered iterator
+
+### Practical Example: Shoe Size Filtering
+
+Here's a comprehensive example that demonstrates how closures can capture variables from their environment:
+
+```rust
+#[derive(PartialEq, Debug)]
+struct Shoe {
+    size: u32,
+    style: String,
+}
+
+fn shoes_in_my_size(shoes: Vec<Shoe>, shoe_size: u32) -> Vec<Shoe> {
+    shoes.into_iter().filter(|x| x.size == shoe_size).collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn filter_by_size() {
+        let shoes = vec![
+            Shoe {
+                size: 10,
+                style: String::from("sneaker"),
+            },
+            Shoe {
+                size: 13,
+                style: String::from("sandal"),
+            },
+            Shoe {
+                size: 10,
+                style: String::from("boot"),
+            },
+        ];
+
+        let in_my_size = shoes_in_my_size(shoes, 10);
+
+        assert_eq!(
+            in_my_size,
+            vec![
+                Shoe {
+                    size: 10,
+                    style: String::from("sneaker"),
+                },
+                Shoe {
+                    size: 10,
+                    style: String::from("boot"),
+                },
+            ]
+        );
+    }
+}
+```
+
+### Understanding Closure Capture
+
+In the example above, the closure `|x| x.size == shoe_size` captures the `shoe_size` parameter from its surrounding environment. This demonstrates several important concepts:
+
+1. **Environment Capture**: The closure can access variables from its enclosing scope
+2. **Immutable Borrowing**: The closure borrows `shoe_size` immutably
+3. **Iterator Chaining**: Combining `into_iter()`, `filter()`, and `collect()` for data transformation
+4. **Ownership**: Using `into_iter()` takes ownership of the vector elements
+
+### Key Benefits
+
+- **Flexibility**: Closures can capture any variable from their environment
+- **Performance**: The filter operation is lazy and only processes elements when consumed
+- **Readability**: The functional approach creates clear, expressive code
+- **Memory Safety**: Rust's ownership system ensures safe access to captured variables
+
+### Advanced Usage Patterns
+
+```rust
+// Capturing multiple variables
+let min_size = 8;
+let max_size = 12;
+let medium_shoes: Vec<_> = shoes
+    .into_iter()
+    .filter(|shoe| shoe.size >= min_size && shoe.size <= max_size)
+    .collect();
+
+// Chaining multiple filters
+let specific_shoes: Vec<_> = shoes
+    .into_iter()
+    .filter(|shoe| shoe.size == 10)
+    .filter(|shoe| shoe.style.contains("boot"))
+    .collect();
+```
+
+This part demonstrates how Rust's closures provide a powerful mechanism for creating flexible, reusable filtering logic that can adapt to different environmental conditions while maintaining memory safety and performance.
