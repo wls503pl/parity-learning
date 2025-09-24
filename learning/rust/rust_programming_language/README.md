@@ -119,9 +119,21 @@ This repository documents a systematic journey through **THE RUST PROGRAMMING LA
 - **Type Inference** - Automatic parameter and return type detection
 - **Project:** `closures/`
 
+#### 14. **Iterators** (Functional Data Processing) ✅
+
+- **Iterator Trait** - Foundation with `next()` method and lazy evaluation
+- **Iterator Creation** - `iter()`, `into_iter()`, `iter_mut()` for different ownership patterns
+- **Consuming Adaptors** - Methods like `sum()` and `collect()` that consume iterators
+- **Iterator Adaptors** - Transform iterators with `map()`, `filter()` for method chaining
+- **Closure Environment Capture** - Flexible filtering with captured variables
+- **Custom Iterators** - Implement `Iterator` trait for domain-specific data structures
+- **Real-World Application** - Refactor CLI applications for performance and readability
+- **Zero-Cost Abstractions** - Compiler optimizations for functional programming patterns
+- **Project:** `Iterator/` (Complete iterator ecosystem with minigrep optimization)
+
 ### **Phase 6: Testing and Quality Assurance** ✅
 
-#### 14. **Writing and Running Tests**
+#### 15. **Writing and Running Tests**
 
 - **Test Functions** - Use `#[test]` attribute for test annotations
 - **Test Organization** - Unit tests in `src/`, integration tests in `tests/`
@@ -129,7 +141,7 @@ This repository documents a systematic journey through **THE RUST PROGRAMMING LA
 - **Test Execution** - Independent threads and failure detection
 - **Project:** `adder/`
 
-#### 15. **Advanced Testing Techniques**
+#### 16. **Advanced Testing Techniques**
 
 - **Assert Macros** - `assert!`, `assert_eq!`, `assert_ne!` for different validation needs
 - **Custom Error Messages** - Descriptive failure messages for better debugging
@@ -141,7 +153,7 @@ This repository documents a systematic journey through **THE RUST PROGRAMMING LA
 
 ### **Phase 7: Real-World Application** ✅
 
-#### 16. **Command Line Applications**
+#### 17. **Command Line Applications**
 
 - **Argument Processing** - Command line parsing and validation
 - **File I/O Operations** - Reading and writing files safely
@@ -149,6 +161,37 @@ This repository documents a systematic journey through **THE RUST PROGRAMMING LA
 - **Error Output Separation** - stdout vs stderr for proper shell integration
 - **Test-Driven Development** - TDD methodology with comprehensive test coverage
 - **Project:** `minigrep/` (Complete grep-like utility)
+
+---
+
+---
+
+## 📁 Project Directory Structure
+
+```
+rust_programming_language/
+├── adder/                    # Phase 6: Basic testing framework
+├── closures/                 # Phase 5: Anonymous functions and environment capture
+├── common_collections/       # Phase 2: Vector, String, HashMap
+├── enum_/                    # Phase 1: Enums and Option<T>
+├── Generics/                 # Phase 4: Generic data types
+├── guessing_game/           # Phase 1: Basic programming concepts
+├── hello_cargo/             # Phase 1: Getting started with Cargo
+├── Iterator/                # Phase 5: Functional data processing
+├── LifeTime/                # Phase 4: Lifetime annotations
+├── match_control/           # Phase 1: Pattern matching
+├── minigrep/                # Phase 7: Complete CLI application
+├── ownership/               # Phase 2: Memory safety and borrowing
+├── Package/                 # Phase 2: Module system
+├── panic/                   # Phase 3: Unrecoverable errors
+├── Result_recoverable_errors/ # Phase 3: Recoverable error handling
+├── struct_example/          # Phase 1: Structs and methods
+├── test_control/            # Phase 6: Advanced testing techniques
+├── Trait/                   # Phase 4: Basic traits
+├── Trait2/                  # Phase 4: Advanced trait patterns
+├── use_keywords/            # Phase 2: Import system
+└── README.md               # This learning guide
+```
 
 ---
 
@@ -187,6 +230,8 @@ cd LifeTime && cargo run --bin lifetime_1
 
 # Phase 5: Functional programming
 cd closures && cargo run --bin closure_1
+cd Iterator && cargo run --bin main
+cd Iterator && cargo test  # Run all iterator tests
 
 # Phase 6: Testing (quality assurance)
 cd adder && cargo test
@@ -211,8 +256,9 @@ cd use_keywords && cargo run --bin use_kword
 5. **Master traits gradually** - Basic traits first, then advanced patterns
 6. **Understand lifetimes deeply** - Critical for complex reference patterns
 7. **Apply closures practically** - Environment capture and caching patterns
-8. **Write comprehensive tests** - Ensure code correctness and maintainability
-9. **Build complete applications** - Apply concepts in real projects
+8. **Master iterator patterns** - Foundation for functional programming in Rust
+9. **Write comprehensive tests** - Ensure code correctness and maintainability
+10. **Build complete applications** - Apply concepts in real projects
 
 ---
 
@@ -264,6 +310,15 @@ cd use_keywords && cargo run --bin use_kword
 - Handle environment capture safely
 - Choose appropriate Fn traits for performance
 
+### **Iterator Mastery**
+
+- Understand lazy evaluation and zero-cost abstractions
+- Chain iterator adaptors for complex data transformations
+- Implement custom iterators for domain-specific needs
+- Leverage closures for flexible filtering and mapping
+- Optimize performance with functional programming patterns
+- Refactor imperative code to declarative iterator chains
+
 ### **Testing Proficiency**
 
 - Write comprehensive unit and integration tests
@@ -296,6 +351,7 @@ cd use_keywords && cargo run --bin use_kword
 | **Advanced Trait Patterns**   | Important  | ✅ Complete |
 | **Lifetimes**                 | Critical   | ✅ Complete |
 | **Closures**                  | Important  | ✅ Complete |
+| **Iterators**                 | Essential  | ✅ Complete |
 | **Testing Framework**         | Essential  | ✅ Complete |
 | **Command Line Applications** | Important  | ✅ Complete |
 
@@ -310,6 +366,7 @@ cd use_keywords && cargo run --bin use_kword
 - **Trait complexity** - Start with simple traits before advanced patterns
 - **Lifetime annotations** - Practice with function signatures and struct definitions
 - **Closure environment capture** - Understand memory implications and Fn traits
+- **Iterator lazy evaluation** - Remember that adaptors do nothing until consumed
 - **Test organization** - Balance unit tests vs integration tests
 
 ### **Best Practices Learned**
@@ -325,6 +382,9 @@ cd use_keywords && cargo run --bin use_kword
 - Rely on lifetime elision rules when possible, annotate explicitly when needed
 - Avoid `'static` lifetime unless truly necessary
 - Use closures for caching expensive operations
+- **Prefer iterator chains over explicit loops** for better performance and readability
+- **Leverage lazy evaluation** to avoid unnecessary computations
+- **Use method chaining** to create expressive data transformation pipelines
 - Separate stdout and stderr in command-line applications
 - Write tests with descriptive names and custom error messages
 - Test independence ensures reliable test suites
@@ -338,24 +398,26 @@ cd use_keywords && cargo run --bin use_kword
 - **Generic libraries** with flexible, type-safe APIs
 - **High-performance applications** leveraging zero-cost trait abstractions
 - **Safe concurrent programs** with lifetime-validated shared data
+- **Functional data processing** with iterator-based transformations
 - **Production systems** with comprehensive test coverage
 
 ---
 
 ## 📈 Learning Statistics
 
-**Time Investment:** 160+ hours hands-on practice  
-**Code Examples:** 80+ working implementations  
-**Core Concepts Mastered:** 35+ fundamental Rust patterns  
-**Test Files:** 15+ comprehensive testing examples  
-**Complete Projects:** 3+ real-world applications
+**Time Investment:** 180+ hours hands-on practice  
+**Code Examples:** 90+ working implementations  
+**Core Concepts Mastered:** 40+ fundamental Rust patterns  
+**Test Files:** 20+ comprehensive testing examples  
+**Complete Projects:** 4+ real-world applications  
+**Iterator Patterns:** 15+ functional programming examples
 
 ---
 
-## 👨‍💻 Author
+## 💻 Author
 
 **Peile Wu** (peile.wu.1990@gmail.com)  
-_Updated: September 23, 2025_
+_Updated: September 24, 2025_
 
 ---
 
