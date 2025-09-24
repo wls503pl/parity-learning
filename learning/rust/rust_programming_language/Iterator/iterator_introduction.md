@@ -463,3 +463,229 @@ impl Iterator for Fibonacci {
 ```
 
 Custom iterators unlock the full power of Rust's functional programming capabilities while maintaining zero-cost abstractions and memory safety.
+
+## Part 5: Real-World Application - Improving Minigrep with Iterators
+
+### Project Overview: Minigrep Optimization
+
+This section demonstrates how to refactor a real-world CLI application (minigrep) to leverage iterators for improved performance and code clarity. The minigrep project is a simplified version of the `grep` command-line tool that searches for text patterns in files.
+
+### Key Improvements Made
+
+The refactoring involved two main areas:
+
+1. **Command-line argument parsing** - Using iterator methods instead of indexing
+2. **Text search functionality** - Replacing explicit loops with iterator chains
+
+### 1. Optimizing Command-Line Argument Parsing
+
+#### Before: Vector Indexing Approach
+
+```rust
+// Original implementation
+pub fn new(args: &[String]) -> Result<Config, &'static str> {
+    if args.len() < 3 {
+        return Err("Not enough arguments ...");
+    }
+
+    let query = args[1].clone();
+    let filename = args[2].clone();
+
+    // ... rest of implementation
+}
+
+// In main.rs
+let args: Vec<String> = env::args().collect();
+let config = Config::new(&args).unwrap_or_else(|err| {
+    eprintln!("Problem parsing arguments: {}", err);
+    process::exit(1);
+});
+```
+
+#### After: Iterator-Based Approach
+
+```rust
+// Improved implementation with iterators
+pub fn new(mut args: std::env::Args) -> Result<Config, &'static str> {
+    // Skip the program name (first argument)
+    args.next();
+
+    // Get the query parameter by calling next()
+    let query = match args.next() {
+        Some(arg) => arg,
+        None => return Err("Didn't get a query string"),
+    };
+
+    // Get the filename parameter by calling next()
+    let filename = match args.next() {
+        Some(arg) => arg,
+        None => return Err("Didn't get a file name"),
+    };
+
+    // ... rest of implementation
+}
+
+// In main.rs - Direct iterator usage
+let config = Config::new(env::args()).unwrap_or_else(|err| {
+    eprintln!("Problem parsing arguments: {}", err);
+    process::exit(1);
+});
+```
+
+#### Benefits of Iterator Approach:
+
+1. **Memory Efficiency**: No need to collect all arguments into a vector
+2. **Ownership**: Arguments are moved rather than cloned
+3. **Better Error Handling**: More specific error messages for missing arguments
+4. **Lazy Evaluation**: Only processes arguments as needed
+
+### 2. Optimizing Text Search Function
+
+#### Before: Explicit Loop Implementation
+
+```rust
+pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    let mut results = Vec::new();
+
+    for line in contents.lines() {
+        if line.contains(query) {
+            results.push(line);
+        }
+    }
+
+    results
+}
+```
+
+#### After: Functional Iterator Chain
+
+```rust
+pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    contents
+        .lines()                           // Iterator over lines
+        .filter(|line| line.contains(query)) // Keep matching lines
+        .collect()                         // Collect into vector
+}
+```
+
+#### Analysis of the Iterator Chain:
+
+1. **`.lines()`** - Creates an iterator over lines in the text
+2. **`.filter(|line| line.contains(query))`** - Keeps only lines containing the query
+3. **`.collect()`** - Materializes the filtered results into a vector
+
+### Performance and Readability Benefits
+
+#### Performance Improvements:
+
+- **Zero-cost abstractions**: The compiler optimizes iterator chains into efficient loops
+- **Reduced allocations**: No intermediate vector creation during filtering
+- **Lazy evaluation**: Only processes matching lines
+
+#### Code Quality Improvements:
+
+- **Declarative style**: Code expresses _what_ to do rather than _how_
+- **Reduced mutability**: No need for mutable `results` vector
+- **Fewer lines**: More concise and expressive
+- **Less error-prone**: No manual loop management
+
+### Complete Example Integration
+
+```rust
+use std::env;
+use std::process;
+
+// lib.rs
+impl Config {
+    pub fn new(mut args: std::env::Args) -> Result<Config, &'static str> {
+        args.next(); // Skip program name
+
+        let query = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a query string"),
+        };
+
+        let filename = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a file name"),
+        };
+
+        let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
+
+        Ok(Config { query, filename, case_sensitive })
+    }
+}
+
+pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    contents
+        .lines()
+        .filter(|line| line.contains(query))
+        .collect()
+}
+
+// main.rs
+fn main() {
+    let config = Config::new(env::args()).unwrap_or_else(|err| {
+        eprintln!("Problem parsing arguments: {}", err);
+        process::exit(1);
+    });
+
+    // ... rest of main function
+}
+```
+
+### Key Takeaways
+
+1. **Direct Iterator Usage**: `env::args()` returns an iterator that can be used directly
+2. **Ownership Benefits**: Iterator approach avoids unnecessary cloning
+3. **Error Handling**: More specific error messages improve user experience
+4. **Functional Programming**: Iterator chains create more expressive code
+5. **Performance**: Zero-cost abstractions provide efficiency without sacrificing readability
+
+This refactoring demonstrates how iterators can transform imperative code into functional, efficient, and maintainable Rust code while leveraging the language's zero-cost abstraction philosophy.
+
+### Project Structure and Testing Results
+
+#### Updated Directory Structure
+
+```
+Iterator/
+├── img/
+│   └── Optimizing_minigrep_byIterator.png
+├── src/
+│   ├── lib.rs
+│   └── main.rs
+├── tests/
+│   ├── custom_iterators.rs
+│   └── iter_capture_closure.rs
+├── Cargo.lock
+├── Cargo.toml
+└── iterator_introduction.md
+```
+
+#### Test Execution Results
+
+The optimized minigrep implementation passes all tests successfully:
+
+![Minigrep Iterator Optimization Results](./img/Optimizing_minigrep_byIterator.png)
+
+#### Functional Test Verification
+
+The application works correctly with real text processing:
+
+```bash
+PS E:\parity-learning\learning\rust\rust_programming_language\minigrep> cargo run to poem.txt
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running `target\debug\minigrep.exe to poem.txt`
+Are you nobody too?
+How dreary to be somebody!
+```
+
+#### Key Observations
+
+1. **All Tests Pass**: Both case-sensitive and case-insensitive search functionality work correctly
+2. **Fast Compilation**: The iterator-based implementation compiles quickly (0.02s)
+3. **Working Functionality**: Real text search demonstrates the practical benefits
+4. **Clean Output**: The optimized search function correctly identifies matching lines
+
+The successful test results confirm that the iterator-based refactoring maintains all original functionality while providing the performance and readability benefits discussed in the previous sections. The zero-cost abstraction principle is demonstrated through the unchanged behavior and maintained performance characteristics.

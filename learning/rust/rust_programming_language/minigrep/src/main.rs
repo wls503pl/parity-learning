@@ -15,7 +15,7 @@ fn main() {
      * you must use 'env::args_os()'. The iterator it returns produces values ​​of type 'OsString'.
      * This program is relatively simple here, so we will not consider this case.
      */
-    let args: Vec<String> = env::args().collect();
+    // let args: Vec<String> = env::args().collect();
 
     /*
      * Add some processing to the 'new' function to make the generated error message more friendly if an error occurs
@@ -24,7 +24,13 @@ fn main() {
      * If the previous Result returns 'Err', 'unwrap_or_else' will call a closure
      * (a defined anonymous function: |err| is equivalent to the function's parameter, followed by the function body)
      */
-    let config = Config::new(&args).unwrap_or_else(|err| {
+
+    /*
+     * Improving this project with iterators.
+     * 'env::args()' itself generates an iterator, which can be passed directly to the new function.
+     */
+
+    let config = Config::new(env::args()).unwrap_or_else(|err| {
         eprintln!("Problem parsing arguments: {}", err);
         /*
          * Call process::exit(1); The program execution will be terminated immediately, and the parameter '1' is the status code of the program exit
