@@ -324,3 +324,142 @@ let specific_shoes: Vec<_> = shoes
 ```
 
 This part demonstrates how Rust's closures provide a powerful mechanism for creating flexible, reusable filtering logic that can adapt to different environmental conditions while maintaining memory safety and performance.
+
+## Part 4: Creating Custom Iterators with Iterator Trait
+
+### Implementing Custom Iterators
+
+Creating a custom iterator in Rust requires only one step: **implementing the `next` method**. Once you provide this implementation, all other iterator methods become automatically available through the trait's default implementations.
+
+### Counter Example: A Simple Custom Iterator
+
+Here's a complete implementation of a custom iterator that counts from 1 to 5:
+
+```rust
+use std::iter::Iterator;
+
+struct Counter {
+    count: u32,
+}
+
+impl Counter {
+    fn new() -> Counter {
+        Counter { count: 0 }
+    }
+}
+
+// Custom Iterator implementation for Counter struct
+impl Iterator for Counter {
+    type Item = u32;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.count < 5 {
+            self.count += 1;
+            Some(self.count)
+        } else {
+            None
+        }
+    }
+}
+```
+
+### Testing the Custom Iterator
+
+#### Direct `next()` Method Calls
+
+```rust
+#[test]
+fn calling_next_directly() {
+    let mut counter = Counter::new();
+
+    assert_eq!(counter.next(), Some(1));
+    assert_eq!(counter.next(), Some(2));
+    assert_eq!(counter.next(), Some(3));
+    assert_eq!(counter.next(), Some(4));
+    assert_eq!(counter.next(), Some(5));
+    assert_eq!(counter.next(), None);
+}
+```
+
+#### Using Iterator Trait Methods
+
+Once you implement the `Iterator` trait, all iterator methods become available:
+
+```rust
+#[test]
+fn using_other_iterator_trait_methods() {
+    let sum: u32 = Counter::new()
+        /*
+         * 'zip' method takes two iterators and links each pair of elements
+         * together to form tuples. First iterator: Counter([1,2,3,4,5]).
+         * Second iterator: Counter with skip(1) = [2,3,4,5].
+         * After 'zip': [(1,2), (2,3), (3,4), (4,5)]
+         * After 'map': [2, 6, 12, 20] (a * b for each pair)
+         * After 'filter': [6, 12] (numbers divisible by 3)
+         * After 'sum': 18
+         */
+        .zip(Counter::new().skip(1))
+        .map(|(a, b)| a * b)
+        .filter(|x| x % 3 == 0)
+        .sum();
+
+    assert_eq!(18, sum);
+}
+```
+
+### Breaking Down the Complex Chain
+
+Let's trace through the complex iterator chain step by step:
+
+1. **`Counter::new()`** → `[1, 2, 3, 4, 5]`
+2. **`Counter::new().skip(1)`** → `[2, 3, 4, 5]`
+3. **`.zip(...)`** → `[(1,2), (2,3), (3,4), (4,5)]`
+4. **`.map(|(a, b)| a * b)`** → `[2, 6, 12, 20]`
+5. **`.filter(|x| x % 3 == 0)`** → `[6, 12]`
+6. **`.sum()`** → `18`
+
+### Key Implementation Requirements
+
+When implementing the `Iterator` trait:
+
+1. **Associated Type**: Define `type Item` to specify what the iterator yields
+2. **`next` Method**: Return `Some(item)` for valid items, `None` when exhausted
+3. **Mutable State**: The `next` method takes `&mut self` to modify internal state
+4. **Termination**: Ensure the iterator eventually returns `None` to avoid infinite loops
+
+### Benefits of Custom Iterators
+
+- **Lazy Evaluation**: Your iterator only computes values when requested
+- **Memory Efficiency**: No need to store all values in memory at once
+- **Composability**: Automatic access to all iterator adaptor methods
+- **Zero-Cost Abstractions**: Rust optimizes iterator chains to efficient loops
+- **Reusability**: Can be used with any iterator-consuming code
+
+### Advanced Custom Iterator Patterns
+
+```rust
+// Iterator that yields Fibonacci numbers
+struct Fibonacci {
+    current: u64,
+    next: u64,
+}
+
+impl Fibonacci {
+    fn new() -> Self {
+        Fibonacci { current: 0, next: 1 }
+    }
+}
+
+impl Iterator for Fibonacci {
+    type Item = u64;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let current = self.current;
+        self.current = self.next;
+        self.next = current + self.next;
+        Some(current)
+    }
+}
+```
+
+Custom iterators unlock the full power of Rust's functional programming capabilities while maintaining zero-cost abstractions and memory safety.
