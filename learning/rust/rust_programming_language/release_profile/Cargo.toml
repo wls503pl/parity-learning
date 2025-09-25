@@ -1,0 +1,19 @@
+[package]
+name = "release_profile"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+# The opt-level parameter determines the degree of optimization Rust performs on the code when compiling.
+# The value range is 0~3. The higher the optimization level, the more time it takes.
+[profile.dev]
+
+# To shorten compilation time during development, set this to 1 so that no additional parameters are added when running cargo build,
+# and some optimizations will be made during compilation (but not as much as in release mode).
+opt-level = 1
+
+# When releasing the final product, spend more time compiling the program, because it only needs to be compiled once when releasing,
+# and this time the compilation must be in-depth to ensure performance.
+[profile.release]
+opt-level = 3
