@@ -134,7 +134,7 @@ edition = "2024"
 add_one = { path = "../add_one" }
 ```
 
-![Dependency Configuration](img/relationship_between_crates.png)
+![Dependency Configuration](img/dependency_config.png)
 
 **Important**: You must explicitly specify the dependency relationship between crates, even within the same workspace.
 
@@ -163,7 +163,7 @@ To run a specific crate within the workspace, use the `-p` flag:
 cargo run -p adder
 ```
 
-![Execution Result](img/run_adder.png)
+![Execution Result](img/execution_result.png)
 
 The execution shows:
 
@@ -209,3 +209,101 @@ The key advantages include:
 - Streamlined development workflow
 
 This approach is particularly valuable for large projects, libraries with multiple components, or applications that can be logically split into separate crates while maintaining tight integration.
+
+---
+
+## Additional Content: Installing and Extending Cargo
+
+### Installing Binary Crates from crates.io
+
+Cargo provides the ability to install binary crates directly from the official Rust package registry.
+
+#### Basic Installation Command
+
+```bash
+cargo install <crate_name>
+```
+
+**Key Points:**
+
+- **Source**: Packages are downloaded from https://crates.io
+- **Limitation**: Only crates with binary targets can be installed
+- **Binary Target**: An executable program generated from crates that have `src/main.rs` or other files designated as binary files
+
+#### Understanding Crate Types
+
+When browsing crates on crates.io, the README typically describes whether a crate has:
+
+- **Library target**: Provides functionality for other crates to use
+- **Binary target**: Provides an executable program
+- **Both**: Some crates provide both library functionality and executable tools
+
+#### Installation Location
+
+Binary crates installed via `cargo install` are stored in a dedicated directory:
+
+- **Default location**: `$HOME/.cargo/bin` (when using rustup with default configuration)
+- **Requirement**: Ensure this directory is included in your `$PATH` environment variable
+- **Access**: Once installed and properly configured, binaries can be run from anywhere in your terminal
+
+#### Example Installation
+
+```bash
+# Install ripgrep, a fast text search tool
+cargo install ripgrep
+
+# Install cargo-watch for automatic rebuilding
+cargo install cargo-watch
+```
+
+### Extending Cargo with Custom Commands
+
+Cargo's architecture allows for powerful extensibility through custom subcommands.
+
+#### How Custom Commands Work
+
+1. **Naming Convention**: Any binary in your `$PATH` named `cargo-something` can be invoked as:
+
+   ```bash
+   cargo something
+   ```
+
+2. **Discovery**: Cargo automatically recognizes and integrates these custom commands
+
+3. **Listing Available Commands**: View all available cargo commands (built-in and custom):
+   ```bash
+   cargo --list
+   ```
+
+#### Examples of Popular Extensions
+
+```bash
+# Install cargo-watch for automatic rebuilding on file changes
+cargo install cargo-watch
+# Usage: cargo watch -x build
+
+# Install cargo-audit for security vulnerability scanning
+cargo install cargo-audit
+# Usage: cargo audit
+
+# Install cargo-expand for macro expansion
+cargo install cargo-expand
+# Usage: cargo expand
+```
+
+#### Benefits of Cargo Extensions
+
+1. **Seamless Integration**: Custom commands feel like native cargo functionality
+2. **Easy Installation**: Use `cargo install` to add new capabilities
+3. **Community Ecosystem**: Leverage tools developed by the Rust community
+4. **Consistent Interface**: All commands follow cargo's familiar patterns
+
+#### Creating Your Own Extensions
+
+You can create custom cargo extensions by:
+
+1. Creating a binary crate with a name starting with `cargo-`
+2. Installing it via `cargo install --path .` or publishing to crates.io
+3. Using it as a cargo subcommand
+
+This extensibility makes cargo not just a build tool, but a platform for the entire Rust development ecosystem.
