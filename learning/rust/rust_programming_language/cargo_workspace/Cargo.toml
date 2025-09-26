@@ -1,0 +1,10 @@
+# The content of this file is different from the Cargo.toml files in other examples.
+# It configures the entire workspace, and the file contains neither [package] nor metadata.
+# Here we use [workspace] to start. In this area, you can add some members to the workspace,
+# that is, specify the working path of the binary crate, for example, if you want to add a member called 'adder'.
+
+[workspace]
+members = [
+    "adder",
+    "add_one",
+]
