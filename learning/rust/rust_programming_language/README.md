@@ -162,6 +162,15 @@ This repository documents a systematic journey through **THE RUST PROGRAMMING LA
 - **Test-Driven Development** - TDD methodology with comprehensive test coverage
 - **Project:** `minigrep/` (Complete grep-like utility)
 
+#### 18. **Release Management and Publishing**
+
+- **Release Profiles** - Optimize builds for development vs production with `opt-level` configuration
+- **Crate Publishing** - Share code through crates.io with proper metadata and API token management
+- **Documentation Generation** - Create HTML documentation with `cargo doc` and documentation comments
+- **Public API Design** - Use `pub use` for convenient user-friendly APIs that differ from internal structure
+- **Version Management** - Handle semantic versioning, yanking, and package maintenance
+- **Project:** `release_profile/` (Complete publishing and documentation workflow)
+
 ---
 
 ---
@@ -184,6 +193,7 @@ rust_programming_language/
 ├── ownership/               # Phase 2: Memory safety and borrowing
 ├── Package/                 # Phase 2: Module system
 ├── panic/                   # Phase 3: Unrecoverable errors
+├── release_profile/         # Phase 7: Release management and publishing
 ├── Result_recoverable_errors/ # Phase 3: Recoverable error handling
 ├── struct_example/          # Phase 1: Structs and methods
 ├── test_control/            # Phase 6: Advanced testing techniques
@@ -241,6 +251,11 @@ cd test_control && cargo test --test test_byName
 # Phase 7: Real-world application
 cd minigrep && cargo run body poem.txt
 cd minigrep && CASE_INSENSITIVE=1 cargo run to poem.txt
+
+# Release management and publishing
+cd release_profile && cargo doc --open
+cd release_profile && cargo build
+cd release_profile && cargo build --release
 
 # Module system and organization
 cd Package && cargo run
@@ -354,6 +369,7 @@ cd use_keywords && cargo run --bin use_kword
 | **Iterators**                 | Essential  | ✅ Complete |
 | **Testing Framework**         | Essential  | ✅ Complete |
 | **Command Line Applications** | Important  | ✅ Complete |
+| **Release Management**        | Important  | ✅ Complete |
 
 ## 💡 Tips for Success
 
@@ -417,7 +433,7 @@ cd use_keywords && cargo run --bin use_kword
 ## 💻 Author
 
 **Peile Wu** (peile.wu.1990@gmail.com)  
-_Updated: September 24, 2025_
+_Updated: September 26, 2025_
 
 ---
 
