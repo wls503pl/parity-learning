@@ -1,7 +1,10 @@
 [package]
-name = "release_profile"
+name = "Genius-Self-study"
+authors = ["Peile"]
 version = "0.1.0"
 edition = "2024"
+description = "A Rust Practice"
+license = "MIT"
 
 [dependencies]
 
