@@ -1,5 +1,9 @@
 use std::ops::Deref;
 
+fn hello(name: &str) {
+    println!("Hello, {}", name);
+}
+
 struct MyBox<T>(T);
 
 impl<T> MyBox<T> {
@@ -24,4 +28,9 @@ fn main() {
 
     assert_eq!(5, x);
     assert_eq!(5, *y); // Rust will implicitly expand *y to *(y.deref())
+
+    let m = MyBox::new(String::from("Rust"));
+    // &m type is &MyBox<String>
+    // deref &MyBox<String> => String => &str
+    hello(&m);
 }
