@@ -1,0 +1,10 @@
+[package]
+name = "multi_threads"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+[[bin]]
+name = "mc"
+path = "./src/move_closure.rs"
