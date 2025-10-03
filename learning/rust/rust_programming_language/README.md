@@ -520,7 +520,7 @@ cd smartPointer/Memory_leaks && cargo run
 ## 💻 Author
 
 **Peile Wu** (peile.wu.1990@gmail.com)  
-_Updated: September 30, 2025_
+_Updated: October 3rd, 2025_
 
 ---
 
