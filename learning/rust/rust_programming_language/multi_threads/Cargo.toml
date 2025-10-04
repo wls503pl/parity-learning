@@ -8,3 +8,7 @@ edition = "2024"
 [[bin]]
 name = "mc"
 path = "./src/move_closure.rs"
+
+[[bin]]
+name = "ch"
+path = "./src/channel.rs"
