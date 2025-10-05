@@ -225,6 +225,41 @@ This repository documents a systematic journey through **THE RUST PROGRAMMING LA
 - **upgrade() Method** - Safe access to potentially dropped values
 - **Project:** `smartPointer/Memory_leaks/`
 
+### **Phase 9: Concurrency and Multi-Threading** ✅
+
+#### 25. **Thread Creation and Management**
+
+- **Thread Spawning** - Create concurrent execution with `thread::spawn`
+- **JoinHandle** - Ensure thread completion before program exit
+- **Move Closures** - Transfer ownership to threads with `move` keyword
+- **1:1 Threading Model** - OS-level threads with minimal runtime overhead
+- **Project:** `multi_threads/`
+
+#### 26. **Message Passing with Channels**
+
+- **mpsc Channels** - Multiple Producer, Single Consumer communication
+- **Ownership Transfer** - Send data between threads safely
+- **Blocking Receive** - `recv()` waits for messages
+- **Multiple Producers** - Clone senders for concurrent data flow
+- **Project:** `multi_threads/` (channel examples)
+
+#### 27. **Shared-State Concurrency**
+
+- **Mutex<T>** - Mutual exclusion for thread-safe mutation
+- **Arc<T>** - Atomic reference counting for thread-safe shared ownership
+- **Lock Guards** - Automatic lock release with RAII pattern
+- **Deadlock Prevention** - Best practices for multi-lock scenarios
+- **Project:** `multi_threads/` (single and multi-threaded mutex)
+
+#### 28. **Send and Sync Traits**
+
+- **Send Trait** - Types that can transfer ownership between threads
+- **Sync Trait** - Types safe to reference from multiple threads
+- **Marker Traits** - Compile-time thread safety guarantees
+- **Manual Implementation** - Unsafe and requires careful reasoning
+- **Arc vs Rc** - Thread-safe vs single-threaded reference counting
+- **Project:** `multi_threads/` (trait demonstrations)
+
 ---
 
 ## 📁 Project Directory Structure
@@ -232,6 +267,7 @@ This repository documents a systematic journey through **THE RUST PROGRAMMING LA
 ```
 rust_programming_language/
 ├── adder/                    # Phase 6: Basic testing framework
+├── cargo_workspace/          # Workspace management (not documented yet)
 ├── closures/                 # Phase 5: Anonymous functions and environment capture
 ├── common_collections/       # Phase 2: Vector, String, HashMap
 ├── enum_/                    # Phase 1: Enums and Option<T>
@@ -242,6 +278,7 @@ rust_programming_language/
 ├── LifeTime/                # Phase 4: Lifetime annotations
 ├── match_control/           # Phase 1: Pattern matching
 ├── minigrep/                # Phase 7: Complete CLI application
+├── multi_threads/           # Phase 9: Concurrency and multi-threading
 ├── ownership/               # Phase 2: Memory safety and borrowing
 ├── Package/                 # Phase 2: Module system
 ├── panic/                   # Phase 3: Unrecoverable errors
@@ -327,6 +364,13 @@ cd smartPointer/Drop_trait && cargo run
 cd smartPointer/Rc_t && cargo run
 cd smartPointer/Ref_Cell && cargo test
 cd smartPointer/Memory_leaks && cargo run
+
+# Phase 9: Concurrency and multi-threading
+cd multi_threads && cargo run --bin main
+cd multi_threads && cargo run --bin channel
+cd multi_threads && cargo run --bin single_mutex
+cd multi_threads && cargo run --bin multi_mutex
+cd multi_threads && cargo run --bin move_closure
 ```
 
 ### **Learning Strategy**
@@ -342,6 +386,7 @@ cd smartPointer/Memory_leaks && cargo run
 9. **Write comprehensive tests** - Ensure code correctness and maintainability
 10. **Build complete applications** - Apply concepts in real projects
 11. **Understand smart pointers** - Master heap allocation and memory management patterns
+12. **Practice concurrent programming** - Learn thread safety through Rust's type system
 
 ---
 
@@ -427,6 +472,15 @@ cd smartPointer/Memory_leaks && cargo run
 - Prevent memory leaks from reference cycles
 - Use `Weak<T>` for non-owning references
 
+### **Concurrent Programming**
+
+- Create and manage multiple threads safely
+- Communicate between threads with channels
+- Share state with Mutex and Arc
+- Understand Send and Sync trait guarantees
+- Prevent data races at compile time
+- Choose appropriate concurrency patterns
+
 ---
 
 ## 📊 Progress Tracking
@@ -449,6 +503,7 @@ cd smartPointer/Memory_leaks && cargo run
 | **Command Line Applications** | Important  | ✅ Complete |
 | **Release Management**        | Important  | ✅ Complete |
 | **Smart Pointers**            | Essential  | ✅ Complete |
+| **Multi-Threading**           | Critical   | ✅ Complete |
 
 ## 💡 Tips for Success
 
@@ -465,6 +520,8 @@ cd smartPointer/Memory_leaks && cargo run
 - **Test organization** - Balance unit tests vs integration tests
 - **Smart pointer selection** - Choose the right smart pointer for each scenario
 - **Reference cycles** - Recognize and prevent memory leaks with `Weak<T>`
+- **Thread safety** - Understand Send and Sync trait requirements
+- **Deadlock prevention** - Use consistent lock ordering with multiple mutexes
 
 ### **Best Practices Learned**
 
@@ -489,6 +546,9 @@ cd smartPointer/Memory_leaks && cargo run
 - **Choose `Rc<T>` for shared ownership in single-threaded contexts**
 - **Apply `RefCell<T>` only when compile-time checking is insufficient**
 - **Prevent cycles with `Weak<T>` in tree and graph structures**
+- **Use channels for thread communication over shared state when possible**
+- **Prefer `Arc<Mutex<T>>` for shared mutable state across threads**
+- **Keep critical sections short** to minimize lock contention
 
 ### **Real-World Applications**
 
@@ -502,25 +562,27 @@ cd smartPointer/Memory_leaks && cargo run
 - **Functional data processing** with iterator-based transformations
 - **Production systems** with comprehensive test coverage
 - **Complex data structures** with safe memory management using smart pointers
+- **Multi-threaded applications** with fearless concurrency
 
 ---
 
 ## 📈 Learning Statistics
 
-**Time Investment:** 200+ hours hands-on practice  
-**Code Examples:** 110+ working implementations  
-**Core Concepts Mastered:** 46+ fundamental Rust patterns  
+**Time Investment:** 220+ hours hands-on practice  
+**Code Examples:** 120+ working implementations  
+**Core Concepts Mastered:** 50+ fundamental Rust patterns  
 **Test Files:** 20+ comprehensive testing examples  
 **Complete Projects:** 4+ real-world applications  
 **Iterator Patterns:** 15+ functional programming examples  
-**Smart Pointer Patterns:** 12+ memory management implementations
+**Smart Pointer Patterns:** 12+ memory management implementations  
+**Concurrency Examples:** 8+ multi-threading patterns
 
 ---
 
 ## 💻 Author
 
 **Peile Wu** (peile.wu.1990@gmail.com)  
-_Updated: October 3rd, 2025_
+_Updated: October 6th, 2025_
 
 ---
 
