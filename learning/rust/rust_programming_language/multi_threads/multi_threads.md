@@ -2,7 +2,7 @@
 
 **Author:** Peile Wu  
 **Contact:** peile.wu.1990@gmail.com  
-**Date:** October 2, 2025
+**Date:** October 5, 2025
 
 ---
 
@@ -300,3 +300,201 @@ fn main() {
 ![Multiple senders execution result](img/multi_sender.png)
 
 **Result:** Messages from both senders are interleaved as they arrive. The receiver processes all messages from multiple producers through a single channel, demonstrating the "multiple producer, single consumer" pattern.
+
+---
+
+## Shared-State Concurrency with Mutex
+
+### Philosophy
+
+While message passing is excellent for concurrency, shared memory is another valid approach. Rust's motto extended: **"Share memory by communicating, but when you need shared state, use Mutex safely."**
+
+### What is Mutex?
+
+**Mutex** (mutual exclusion) allows only one thread to access data at a time.
+
+Key concepts:
+
+- **Lock**: Must be acquired before accessing data
+- **Unlock**: Must be released after finishing with data
+- Rust's type system prevents forgetting to acquire/release locks
+
+### Mutex API
+
+- `Mutex::new(data)`: Creates a new mutex wrapping the data
+- `lock()`: Acquires the lock, blocking if necessary
+  - Returns `LockResult<MutexGuard<T>>`
+  - `unwrap()` handles potential poisoning (when a thread panics while holding the lock)
+- **MutexGuard**: Smart pointer that automatically releases the lock when dropped
+
+### Single-Threaded Mutex Example
+
+```rust
+use std::sync::Mutex;
+
+fn main() {
+    let m = Mutex::new(5);
+
+    {
+        let mut num = m.lock().unwrap();
+        *num = 6;
+    } // lock Drop here
+
+    println!("m = {:?}", m);
+}
+```
+
+![Single mutex execution](img/single_mutex.png)
+
+**Output:** `m = Mutex { data: 6, poisoned: false, .. }`
+
+**Explanation:** The mutex wraps the value `5`. We acquire the lock, modify the value to `6`, and the lock is automatically released when `num` goes out of scope. The debug output shows the mutex's internal state including the data value.
+
+### Multi-Threaded Mutex with Arc
+
+To share a mutex across multiple threads, we need **Arc** (Atomic Reference Counting):
+
+- `Arc<T>`: Thread-safe reference counting pointer
+- Similar to `Rc<T>` but uses atomic operations
+- Safe to use across multiple threads
+
+```rust
+use std::sync::{Arc, Mutex};
+use std::thread;
+
+fn main() {
+    let counter = Arc::new(Mutex::new(0));
+    let mut handles = vec![];
+
+    for _ in 0..10 {
+        let counter = Arc::clone(&counter);
+        let handle = thread::spawn(move || {
+            let mut num = counter.lock().unwrap();
+            *num += 1;
+        });
+        handles.push(handle);
+    }
+
+    for handle in handles {
+        handle.join().unwrap();
+    }
+
+    println!("Result: {}", *counter.lock().unwrap());
+}
+```
+
+![Multiple mutex execution](img/multi_mutex.png)
+
+**Output:** `Result: 10`
+
+**Explanation:** Ten threads each increment a shared counter protected by a mutex. The `Arc` allows multiple ownership across threads, while the `Mutex` ensures only one thread can modify the counter at a time. All threads complete successfully, and the final result is `10`, demonstrating safe concurrent mutation.
+
+### Why Arc Instead of Rc?
+
+`Rc<T>` is not thread-safe because:
+
+- It doesn't use atomic operations for reference counting
+- Multiple threads could simultaneously modify the count, causing data races
+
+`Arc<T>` uses atomic operations, providing thread-safe reference counting at a small performance cost.
+
+### Mutex Safety Guarantees
+
+Rust's type system provides several guarantees:
+
+1. **Cannot forget to acquire lock**: The data inside `Mutex<T>` is only accessible through `lock()`
+2. **Cannot access data without lock**: Type system enforces this at compile time
+3. **Automatic lock release**: `MutexGuard` implements `Drop`, ensuring the lock is released
+4. **Send + Sync traits**: Compiler verifies the mutex can be safely shared across threads
+
+### Potential Issues with Mutex
+
+**Deadlock risk:** While Rust prevents data races, it cannot prevent logical errors like deadlocks:
+
+```rust
+// Example: Potential deadlock scenario
+let m1 = Arc::new(Mutex::new(1));
+let m2 = Arc::new(Mutex::new(2));
+
+// Thread 1: locks m1, then m2
+// Thread 2: locks m2, then m1
+// Can cause deadlock if timing is unfortunate
+```
+
+**Best practices:**
+
+- Keep critical sections (locked code) short
+- Avoid nested locks when possible
+- Use consistent lock ordering if multiple locks are needed
+- Consider using channels instead of shared state when appropriate
+
+---
+
+## Sync and Send Traits
+
+Rust's concurrency safety is built on two marker traits:
+
+### Send Trait
+
+**`Send`** indicates a type's ownership can be transferred between threads.
+
+- Most Rust types are `Send`
+- Exceptions: `Rc<T>` (not thread-safe), raw pointers
+- Composed types are `Send` if all components are `Send`
+
+### Sync Trait
+
+**`Sync`** indicates it's safe to reference a type from multiple threads.
+
+- Type `T` is `Sync` if `&T` is `Send`
+- Primitive types are `Sync`
+- Types composed entirely of `Sync` types are also `Sync`
+- `Rc<T>`, `RefCell<T>`, and `Cell<T>` are not `Sync`
+- `Mutex<T>` is `Sync` (when `T` is `Send`)
+- `Arc<T>` is both `Send` and `Sync` (when `T` is `Send + Sync`)
+
+### Manual Implementation
+
+Manually implementing `Send` and `Sync` is **unsafe** and requires careful reasoning about thread safety guarantees. Generally, building types from `Send` and `Sync` components automatically provides these traits.
+
+---
+
+## Complete Examples Summary
+
+The project structure demonstrates key concurrency patterns:
+
+```
+multi_threads/
+├── src/
+│   ├── main.rs              # Main entry point
+│   ├── channel.rs           # Message passing examples
+│   ├── move_closure.rs      # Ownership transfer in threads
+│   ├── single_mutex.rs      # Single-threaded mutex
+│   └── multi_mutex.rs       # Multi-threaded mutex with Arc
+├── img/
+│   ├── move_closure.png     # Successful move execution
+│   ├── ownership_error.png  # Ownership error example
+│   ├── move_inChannel.png   # Channel ownership transfer
+│   ├── multi_sender.png     # Multiple producers result
+│   ├── single_mutex.png     # Single mutex output
+│   └── multi_mutex.png      # Multi-threaded counter result
+└── multi_threads.md         # This documentation
+```
+
+---
+
+## Conclusion
+
+Rust's approach to concurrency leverages three key principles:
+
+1. **Ownership and borrowing**: Prevents data races at compile time
+2. **Type system**: Enforces safe concurrent access patterns
+3. **Zero-cost abstractions**: Safety without runtime overhead
+
+Choose your concurrency primitive based on your needs:
+
+- **Channels**: When threads need to communicate by passing data
+- **Mutex + Arc**: When threads need shared mutable state
+- **Thread spawning**: When you need true parallelism
+
+Rust's compiler catches most concurrency bugs before your code runs, enabling **fearless concurrency** - write concurrent code with confidence that it's safe.

@@ -12,3 +12,11 @@ path = "./src/move_closure.rs"
 [[bin]]
 name = "ch"
 path = "./src/channel.rs"
+
+[[bin]]
+name = "mx"
+path = "./src/mutex.rs"
+
+[[bin]]
+name = "mm"
+path = "./src/multi_mutex.rs"
