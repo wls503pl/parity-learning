@@ -2,7 +2,7 @@
 
 **Author:** Peile Wu  
 **Contact:** peile.wu.1990@gmail.com  
-**Date:** October 7, 2025
+**Date:** October 8, 2025
 
 ## Introduction
 
@@ -103,6 +103,176 @@ Many modern programming languages no longer use inheritance as a built-in design
 
 ---
 
+## Using Trait Objects to Store Different Types of Values
+
+### The GUI Tool Example
+
+Consider a requirement to create a GUI tool that:
+
+- Iterates through a list of elements
+- Calls each element's `draw` method to render it
+- Examples: Button, TextField, etc.
+
+#### Object-Oriented Approach
+
+In traditional OOP languages:
+
+1. Define a `Component` parent class with a `draw` method
+2. Define `Button`, `TextField`, etc., inheriting from `Component`
+
+#### Rust Approach: Defining a Trait for Common Behavior
+
+Rust avoids calling struct or enum "objects" because they are separate from their `impl` blocks.
+
+**Trait objects** are somewhat similar to objects in other languages:
+
+- They combine data and behavior to some degree
+- However, trait objects differ from traditional objects:
+  - You cannot add data to trait objects
+  - Trait objects are specifically used to abstract common behavior
+  - They are not as general-purpose as objects in other languages
+
+### Implementation Example
+
+```rust
+// lib.rs
+pub trait Draw {
+    fn draw(&self);
+}
+
+pub struct Screen {
+    pub components: Vec<Box<dyn Draw>>,
+}
+
+impl Screen {
+    pub fn run(&self) {
+        for component in self.components.iter() {
+            component.draw()
+        }
+    }
+}
+
+pub struct Button {
+    pub width: u32,
+    pub height: u32,
+    pub label: String,
+}
+
+impl Draw for Button {
+    fn draw(&self) {
+        // draw a button
+    }
+}
+```
+
+```rust
+// main.rs
+use oo::Draw;
+use oo::{Button, Screen};
+
+struct SelectBox {
+    width: u32,
+    height: u32,
+    options: Vec<String>,
+}
+
+impl Draw for SelectBox {
+    fn draw(&self) {}
+}
+
+fn main() {
+    let screen = Screen {
+        components: vec![
+            Box::new(SelectBox {
+                width: 75,
+                height: 10,
+                options: vec![
+                    String::from("Yes"),
+                    String::from("Maybe"),
+                    String::from("No"),
+                ],
+            }),
+            Box::new(Button {
+                width: 50,
+                height: 10,
+                label: String::from("OK"),
+            }),
+        ],
+    };
+
+    screen.run();
+}
+```
+
+## Dynamic Dispatch vs Static Dispatch
+
+### Static Dispatch
+
+When using trait bounds with generics, the Rust compiler performs **monomorphization**:
+
+- The compiler generates non-generic implementations of functions and methods for each concrete type used to replace the generic type parameter
+- Code generated through monomorphization performs **static dispatch**
+- The specific method to call is determined at compile time
+
+### Dynamic Dispatch
+
+**Dynamic dispatch** means:
+
+- The specific method being called cannot be determined at compile time
+- The compiler generates extra code to figure out which method to call at runtime
+
+**When using trait objects, dynamic dispatch occurs:**
+
+- **Runtime overhead:** Additional performance cost at runtime
+- **Prevents compiler optimizations:** The compiler cannot inline method code, preventing certain optimizations
+
+### Trade-offs
+
+- **Static dispatch (generics):** Faster runtime, larger binary size due to code duplication
+- **Dynamic dispatch (trait objects):** Flexibility to store different types, runtime cost, smaller binary
+
+## Object Safety
+
+### What is Object Safety?
+
+Only traits that are **object-safe** can be made into trait objects.
+
+Rust uses a set of rules to determine whether an object is safe. You only need to remember two key rules:
+
+1. **Method return types must not be `Self`**
+2. **Methods must not contain any generic type parameters**
+
+### Example of Object-Unsafe Trait
+
+The `Clone` trait is not object-safe because its `clone` method returns `Self`:
+
+```rust
+pub trait Clone {
+    fn clone(&self) -> Self;  // Returns Self - not object-safe!
+}
+```
+
+If you try to use it as a trait object:
+
+```rust
+pub struct Screen {
+    pub components: Vec<Box<dyn Clone>>,  // Error!
+}
+```
+
+**This will result in compiler errors:**
+
+![Unsafe Trait Object Error](img/unsafe_trait.png)
+
+The error shows:
+
+- `error[E0573]: expected type, found module 'self'` - The lowercase `self` should be `Self`
+- `error[E0599]: no method named 'draw' found for reference '&Box<dyn Clone>'` - The `Clone` trait doesn't have a `draw` method, and mixing trait requirements causes issues
+
+The compiler cannot determine the concrete size of types implementing the trait at compile time, making it impossible to create trait objects from such traits.
+
+---
+
 ## Summary
 
 Rust incorporates object-oriented concepts through:
@@ -111,5 +281,7 @@ Rust incorporates object-oriented concepts through:
 - **Data and behavior** through structs, enums, and impl blocks
 - **Polymorphism** through traits and generics rather than inheritance
 - **Code reuse** through default trait implementations and composition
+- **Trait objects** (`dyn Trait`) for runtime polymorphism via dynamic dispatch
+- **Object safety rules** to ensure trait objects can be created safely
 
 While Rust does not support classical inheritance, it provides powerful alternatives that maintain type safety and avoid common pitfalls associated with inheritance hierarchies.
