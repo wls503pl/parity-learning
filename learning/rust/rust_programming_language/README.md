@@ -260,6 +260,44 @@ This repository documents a systematic journey through **THE RUST PROGRAMMING LA
 - **Arc vs Rc** - Thread-safe vs single-threaded reference counting
 - **Project:** `multi_threads/` (trait demonstrations)
 
+### **Phase 10: Object-Oriented Programming Features** ✅
+
+#### 29. **Encapsulation and Data Hiding**
+
+- **Objects in Rust** - Structs and enums with methods via `impl` blocks
+- **Encapsulation** - Use `pub` keyword to control API visibility
+- **Private Fields** - Internal implementation details hidden from external code
+- **Public Methods** - Controlled access to object state
+- **Example:** `AveragedCollection` with private list and average fields
+- **Project:** `object_oriented/`
+
+#### 30. **Inheritance Alternatives**
+
+- **No Classical Inheritance** - Rust avoids traditional inheritance hierarchies
+- **Code Reuse** - Default trait implementations for shared behavior
+- **Polymorphism** - Generics and trait bounds instead of subtype polymorphism
+- **Composition Over Inheritance** - Modern design pattern philosophy
+- **Trait-Based Design** - More flexible than class hierarchies
+- **Project:** `object_oriented/`
+
+#### 31. **Trait Objects and Dynamic Dispatch**
+
+- **Trait Objects** - `Box<dyn Trait>` for runtime polymorphism
+- **Dynamic Dispatch** - Method calls resolved at runtime
+- **Heterogeneous Collections** - Store different types implementing same trait
+- **GUI Example** - `Screen` with `Vec<Box<dyn Draw>>` components
+- **Performance Trade-offs** - Flexibility vs runtime overhead
+- **Project:** `object_oriented/` (GUI component example)
+
+#### 32. **Object Safety Rules**
+
+- **Object-Safe Traits** - Requirements for creating trait objects
+- **Method Return Types** - Cannot return `Self` in object-safe traits
+- **No Generic Parameters** - Methods cannot have generic type parameters
+- **Clone Trait Example** - Understanding why `Clone` isn't object-safe
+- **Compiler Guarantees** - Ensuring trait objects can be created safely
+- **Project:** `object_oriented/`
+
 ---
 
 ## 📁 Project Directory Structure
@@ -279,6 +317,7 @@ rust_programming_language/
 ├── match_control/           # Phase 1: Pattern matching
 ├── minigrep/                # Phase 7: Complete CLI application
 ├── multi_threads/           # Phase 9: Concurrency and multi-threading
+├── object_oriented/         # Phase 10: Object-oriented programming features
 ├── ownership/               # Phase 2: Memory safety and borrowing
 ├── Package/                 # Phase 2: Module system
 ├── panic/                   # Phase 3: Unrecoverable errors
@@ -371,6 +410,10 @@ cd multi_threads && cargo run --bin channel
 cd multi_threads && cargo run --bin single_mutex
 cd multi_threads && cargo run --bin multi_mutex
 cd multi_threads && cargo run --bin move_closure
+
+# Phase 10: Object-oriented programming features
+cd object_oriented && cargo run --bin main
+cd object_oriented && cargo run --bin gui_example
 ```
 
 ### **Learning Strategy**
@@ -387,6 +430,7 @@ cd multi_threads && cargo run --bin move_closure
 10. **Build complete applications** - Apply concepts in real projects
 11. **Understand smart pointers** - Master heap allocation and memory management patterns
 12. **Practice concurrent programming** - Learn thread safety through Rust's type system
+13. **Embrace trait objects** - Use dynamic dispatch for runtime polymorphism when needed
 
 ---
 
@@ -481,6 +525,15 @@ cd multi_threads && cargo run --bin move_closure
 - Prevent data races at compile time
 - Choose appropriate concurrency patterns
 
+### **Object-Oriented Design**
+
+- Apply encapsulation through visibility control
+- Use trait objects for runtime polymorphism
+- Understand dynamic vs static dispatch trade-offs
+- Design flexible APIs without classical inheritance
+- Implement object-safe traits correctly
+- Build GUI-like systems with heterogeneous collections
+
 ---
 
 ## 📊 Progress Tracking
@@ -504,6 +557,7 @@ cd multi_threads && cargo run --bin move_closure
 | **Release Management**        | Important  | ✅ Complete |
 | **Smart Pointers**            | Essential  | ✅ Complete |
 | **Multi-Threading**           | Critical   | ✅ Complete |
+| **Object-Oriented Features**  | Important  | ✅ Complete |
 
 ## 💡 Tips for Success
 
@@ -522,6 +576,8 @@ cd multi_threads && cargo run --bin move_closure
 - **Reference cycles** - Recognize and prevent memory leaks with `Weak<T>`
 - **Thread safety** - Understand Send and Sync trait requirements
 - **Deadlock prevention** - Use consistent lock ordering with multiple mutexes
+- **Object safety** - Understand why some traits can't be made into trait objects
+- **Dynamic dispatch overhead** - Balance flexibility with performance costs
 
 ### **Best Practices Learned**
 
@@ -549,6 +605,10 @@ cd multi_threads && cargo run --bin move_closure
 - **Use channels for thread communication over shared state when possible**
 - **Prefer `Arc<Mutex<T>>` for shared mutable state across threads**
 - **Keep critical sections short** to minimize lock contention
+- **Use trait objects (`Box<dyn Trait>`) when you need runtime polymorphism**
+- **Prefer static dispatch (generics) over dynamic dispatch for performance**
+- **Ensure traits are object-safe when designing for trait objects**
+- **Use encapsulation to hide implementation details and maintain clean APIs**
 
 ### **Real-World Applications**
 
@@ -563,26 +623,28 @@ cd multi_threads && cargo run --bin move_closure
 - **Production systems** with comprehensive test coverage
 - **Complex data structures** with safe memory management using smart pointers
 - **Multi-threaded applications** with fearless concurrency
+- **Flexible APIs** using trait objects and polymorphism without inheritance
 
 ---
 
 ## 📈 Learning Statistics
 
-**Time Investment:** 220+ hours hands-on practice  
-**Code Examples:** 120+ working implementations  
-**Core Concepts Mastered:** 50+ fundamental Rust patterns  
+**Time Investment:** 240+ hours hands-on practice  
+**Code Examples:** 130+ working implementations  
+**Core Concepts Mastered:** 55+ fundamental Rust patterns  
 **Test Files:** 20+ comprehensive testing examples  
 **Complete Projects:** 4+ real-world applications  
 **Iterator Patterns:** 15+ functional programming examples  
 **Smart Pointer Patterns:** 12+ memory management implementations  
-**Concurrency Examples:** 8+ multi-threading patterns
+**Concurrency Examples:** 8+ multi-threading patterns  
+**OOP Implementations:** 5+ object-oriented design patterns
 
 ---
 
 ## 💻 Author
 
 **Peile Wu** (peile.wu.1990@gmail.com)  
-_Updated: October 6th, 2025_
+_Updated: October 9th, 2025_
 
 ---
 
