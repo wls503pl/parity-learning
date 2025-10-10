@@ -1,0 +1,22 @@
+[package]
+name = "pattern_matching"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+[[bin]]
+name = "il"
+path = "./src/if_let.rs"
+
+[[bin]]
+name = "wl"
+path = "./src/while_let.rs"
+
+[[bin]]
+name = "for"
+path = "./src/for.rs"
+
+[[bin]]
+name = "fp"
+path = "./src/function_parameters.rs"
