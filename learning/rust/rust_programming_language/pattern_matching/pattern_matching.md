@@ -2,7 +2,7 @@
 
 **Author:** Peile Wu  
 **Contact:** peile.wu.1990@gmail.com  
-**Date:** October 10, 2025
+**Date:** October 11, 2025
 
 ---
 
@@ -174,18 +174,94 @@ By understanding and utilizing patterns in various contexts—from `match` expre
 
 ---
 
-## Project Structure
+## Refutability: Whether Patterns Might Fail to Match
+
+**Update Date:** October 11, 2025
+
+### Two Forms of Patterns
+
+**Refutable Patterns:**
+
+- Patterns that can fail to match for some possible values
+- Example: `if let Some(x) = a_value;` - if `a_value` is `None`, the pattern fails to match
+
+**Irrefutable Patterns:**
+
+- Patterns that match any possible value passed to them
+- Example: `let x = 5;` - this always matches
+
+### Pattern Requirements by Context
+
+**Contexts that accept ONLY irrefutable patterns:**
+
+- Function parameters
+- `let` statements
+- `for` loops
+
+**Contexts that accept BOTH refutable and irrefutable patterns:**
+
+- `if let` expressions
+- `while let` expressions
+- Note: Using an irrefutable pattern in these contexts will trigger a compiler warning about possible failure
+
+### Common Error: Refutable Pattern in `let` Statement
+
+```rust
+fn main() {
+    let a: Option<i32> = Some(5);
+    let Some(x) = a;  // ERROR: refutable pattern in local binding
+}
+```
+
+**Error Explanation:**
+
+- Since `a` could be `None`, and `let` statements require irrefutable patterns
+- `Some(x)` is refutable, causing a compilation error
+- The compiler error: `refutable pattern in local binding`
+- Note: `pattern 'None' not covered`
+
+**Solution 1: Use `if let`**
+
+```rust
+if let Some(x) = a {
+    // Handle the Some case
+}
+```
+
+**Solution 2: Use `let else`**
+
+```rust
+let Some(x) = a else { todo!() };
+```
+
+### Warning: Irrefutable Pattern in `if let`
+
+If you use an irrefutable pattern with `if let`, the compiler will warn you:
+
+```rust
+if let x = 5 {
+    // Warning: irrefutable pattern in if let
+}
+```
+
+This should just be a regular `let` statement instead.
+
+---
+
+## Updated Project Structure
 
 ```
 pattern_matching/
+├── img/
+│   └── refutable_error.png
 ├── src/
 │   ├── for.rs
 │   ├── function_parameters.rs
 │   ├── if_let.rs
+│   ├── refutability.rs
 │   └── while_let.rs
 ├── target/
 ├── Cargo.lock
-└── Cargo.toml
+├── Cargo.toml
+└── pattern_matching.md
 ```
-
-Each example file demonstrates a specific use case of pattern matching in Rust.

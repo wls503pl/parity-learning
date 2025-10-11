@@ -20,3 +20,7 @@ path = "./src/for.rs"
 [[bin]]
 name = "fp"
 path = "./src/function_parameters.rs"
+
+[[bin]]
+name = "ra"
+path = "./src/refutability.rs"
