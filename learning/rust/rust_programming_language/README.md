@@ -298,6 +298,26 @@ This repository documents a systematic journey through **THE RUST PROGRAMMING LA
 - **Compiler Guarantees** - Ensuring trait objects can be created safely
 - **Project:** `object_oriented/`
 
+### **Phase 11: Advanced Pattern Matching** ✅
+
+#### 33. **Pattern Syntax and Usage**
+
+- **Pattern Matching Contexts** - `match`, `if let`, `while let`, `for`, `let`, and function parameters
+- **Match Arms** - Exhaustive matching with `_` wildcard for catch-all cases
+- **Conditional Patterns** - `if let` with optional `else if` and `else if let` chains
+- **Loop Patterns** - `while let` for conditional iteration until pattern fails
+- **Destructuring** - Extract values from tuples, structs, and complex types
+- **Project:** `pattern_matching/`
+
+#### 34. **Refutability and Pattern Types**
+
+- **Irrefutable Patterns** - Always match (required for `let`, `for`, function parameters)
+- **Refutable Patterns** - May fail to match (used in `if let`, `while let`)
+- **Compiler Guarantees** - Prevents using refutable patterns where irrefutable required
+- **Error Prevention** - `let Some(x) = value` causes compilation error
+- **Solutions** - Use `if let` or `let else` for refutable patterns
+- **Project:** `pattern_matching/`
+
 ---
 
 ## 📁 Project Directory Structure
@@ -314,13 +334,14 @@ rust_programming_language/
 ├── hello_cargo/             # Phase 1: Getting started with Cargo
 ├── Iterator/                # Phase 5: Functional data processing
 ├── LifeTime/                # Phase 4: Lifetime annotations
-├── match_control/           # Phase 1: Pattern matching
+├── match_control/           # Phase 1: Pattern matching basics
 ├── minigrep/                # Phase 7: Complete CLI application
 ├── multi_threads/           # Phase 9: Concurrency and multi-threading
 ├── object_oriented/         # Phase 10: Object-oriented programming features
 ├── ownership/               # Phase 2: Memory safety and borrowing
 ├── Package/                 # Phase 2: Module system
 ├── panic/                   # Phase 3: Unrecoverable errors
+├── pattern_matching/        # Phase 11: Advanced pattern matching and refutability
 ├── release_profile/         # Phase 7: Release management and publishing
 ├── Result_recoverable_errors/ # Phase 3: Recoverable error handling
 ├── smartPointer/            # Phase 8: Smart pointers and memory management
@@ -414,6 +435,13 @@ cd multi_threads && cargo run --bin move_closure
 # Phase 10: Object-oriented programming features
 cd object_oriented && cargo run --bin main
 cd object_oriented && cargo run --bin gui_example
+
+# Phase 11: Advanced pattern matching
+cd pattern_matching && cargo run --bin if_let
+cd pattern_matching && cargo run --bin while_let
+cd pattern_matching && cargo run --bin for
+cd pattern_matching && cargo run --bin function_parameters
+cd pattern_matching && cargo run --bin refutability
 ```
 
 ### **Learning Strategy**
@@ -431,6 +459,7 @@ cd object_oriented && cargo run --bin gui_example
 11. **Understand smart pointers** - Master heap allocation and memory management patterns
 12. **Practice concurrent programming** - Learn thread safety through Rust's type system
 13. **Embrace trait objects** - Use dynamic dispatch for runtime polymorphism when needed
+14. **Master pattern matching** - Understand when to use exhaustive matching vs conditional patterns
 
 ---
 
@@ -534,6 +563,15 @@ cd object_oriented && cargo run --bin gui_example
 - Implement object-safe traits correctly
 - Build GUI-like systems with heterogeneous collections
 
+### **Pattern Matching Mastery**
+
+- Use patterns in multiple contexts (`match`, `if let`, `while let`, `for`, `let`, functions)
+- Write exhaustive pattern matches for safety
+- Destructure complex data types elegantly
+- Understand refutable vs irrefutable patterns
+- Choose appropriate pattern types for each context
+- Leverage compiler guarantees for pattern correctness
+
 ---
 
 ## 📊 Progress Tracking
@@ -558,6 +596,7 @@ cd object_oriented && cargo run --bin gui_example
 | **Smart Pointers**            | Essential  | ✅ Complete |
 | **Multi-Threading**           | Critical   | ✅ Complete |
 | **Object-Oriented Features**  | Important  | ✅ Complete |
+| **Advanced Pattern Matching** | Important  | ✅ Complete |
 
 ## 💡 Tips for Success
 
@@ -578,6 +617,8 @@ cd object_oriented && cargo run --bin gui_example
 - **Deadlock prevention** - Use consistent lock ordering with multiple mutexes
 - **Object safety** - Understand why some traits can't be made into trait objects
 - **Dynamic dispatch overhead** - Balance flexibility with performance costs
+- **Pattern exhaustiveness** - Ensure all cases are covered in `match` expressions
+- **Refutability rules** - Use correct pattern types in different contexts (`let` vs `if let`)
 
 ### **Best Practices Learned**
 
@@ -609,6 +650,9 @@ cd object_oriented && cargo run --bin gui_example
 - **Prefer static dispatch (generics) over dynamic dispatch for performance**
 - **Ensure traits are object-safe when designing for trait objects**
 - **Use encapsulation to hide implementation details and maintain clean APIs**
+- **Leverage exhaustive pattern matching for compile-time safety**
+- **Use `if let` for single-case matching, `match` for multiple cases**
+- **Destructure in function parameters for cleaner code**
 
 ### **Real-World Applications**
 
@@ -624,27 +668,30 @@ cd object_oriented && cargo run --bin gui_example
 - **Complex data structures** with safe memory management using smart pointers
 - **Multi-threaded applications** with fearless concurrency
 - **Flexible APIs** using trait objects and polymorphism without inheritance
+- **Type-safe parsers** using exhaustive pattern matching
+- **State machines** with enum-based patterns and match expressions
 
 ---
 
 ## 📈 Learning Statistics
 
-**Time Investment:** 240+ hours hands-on practice  
-**Code Examples:** 130+ working implementations  
-**Core Concepts Mastered:** 55+ fundamental Rust patterns  
+**Time Investment:** 250+ hours hands-on practice  
+**Code Examples:** 140+ working implementations  
+**Core Concepts Mastered:** 60+ fundamental Rust patterns  
 **Test Files:** 20+ comprehensive testing examples  
 **Complete Projects:** 4+ real-world applications  
 **Iterator Patterns:** 15+ functional programming examples  
 **Smart Pointer Patterns:** 12+ memory management implementations  
 **Concurrency Examples:** 8+ multi-threading patterns  
-**OOP Implementations:** 5+ object-oriented design patterns
+**OOP Implementations:** 5+ object-oriented design patterns  
+**Pattern Matching Examples:** 10+ advanced pattern matching scenarios
 
 ---
 
 ## 💻 Author
 
 **Peile Wu** (peile.wu.1990@gmail.com)  
-_Updated: October 9th, 2025_
+_Updated: October 12, 2025_
 
 ---
 
