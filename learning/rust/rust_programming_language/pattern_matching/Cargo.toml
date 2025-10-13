@@ -24,3 +24,7 @@ path = "./src/function_parameters.rs"
 [[bin]]
 name = "ra"
 path = "./src/refutability.rs"
+
+[[bin]]
+name = "mnv"
+path = "./src/matching_named_variables.rs"
