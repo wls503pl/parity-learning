@@ -318,6 +318,18 @@ This repository documents a systematic journey through **THE RUST PROGRAMMING LA
 - **Solutions** - Use `if let` or `let else` for refutable patterns
 - **Project:** `pattern_matching/`
 
+#### 35. **Comprehensive Pattern Syntax** ✅
+
+- **Literal Matching** - Direct matching against literal values (numbers, characters)
+- **Named Variables** - Irrefutable patterns that match any value with shadowing behavior
+- **Multiple Patterns** - Use `|` operator for matching multiple alternatives
+- **Range Patterns** - Match ranges with `..=` for both numeric and character values
+- **Destructuring** - Break apart structs, enums, tuples, and nested structures
+- **Ignoring Values** - Use `_`, nested `_`, `_prefix`, and `..` to ignore parts of values
+- **Match Guards** - Additional `if` conditions for complex matching logic
+- **@ Bindings** - Capture values while testing patterns with `@` operator
+- **Project:** `pattern_matching/` (Complete pattern syntax examples)
+
 ---
 
 ## 📁 Project Directory Structure
@@ -341,7 +353,7 @@ rust_programming_language/
 ├── ownership/               # Phase 2: Memory safety and borrowing
 ├── Package/                 # Phase 2: Module system
 ├── panic/                   # Phase 3: Unrecoverable errors
-├── pattern_matching/        # Phase 11: Advanced pattern matching and refutability
+├── pattern_matching/        # Phase 11: Advanced pattern matching and comprehensive syntax
 ├── release_profile/         # Phase 7: Release management and publishing
 ├── Result_recoverable_errors/ # Phase 3: Recoverable error handling
 ├── smartPointer/            # Phase 8: Smart pointers and memory management
@@ -460,6 +472,7 @@ cd pattern_matching && cargo run --bin refutability
 12. **Practice concurrent programming** - Learn thread safety through Rust's type system
 13. **Embrace trait objects** - Use dynamic dispatch for runtime polymorphism when needed
 14. **Master pattern matching** - Understand when to use exhaustive matching vs conditional patterns
+15. **Practice destructuring** - Break apart complex types elegantly in all contexts
 
 ---
 
@@ -571,32 +584,37 @@ cd pattern_matching && cargo run --bin refutability
 - Understand refutable vs irrefutable patterns
 - Choose appropriate pattern types for each context
 - Leverage compiler guarantees for pattern correctness
+- Apply literal and range matching efficiently
+- Use match guards for complex conditional logic
+- Capture values with `@` bindings while pattern matching
+- Ignore irrelevant values with `_` and `..` patterns
 
 ---
 
 ## 📊 Progress Tracking
 
-| Skill                         | Importance | Status      |
-| ----------------------------- | ---------- | ----------- |
-| **Basic Syntax**              | Essential  | ✅ Complete |
-| **Ownership System**          | Critical   | ✅ Complete |
-| **Pattern Matching**          | Important  | ✅ Complete |
-| **Collections**               | Important  | ✅ Complete |
-| **Error Handling**            | Essential  | ✅ Complete |
-| **Module System**             | Important  | ✅ Complete |
-| **Generic Types**             | Important  | ✅ Complete |
-| **Basic Traits**              | Important  | ✅ Complete |
-| **Advanced Trait Patterns**   | Important  | ✅ Complete |
-| **Lifetimes**                 | Critical   | ✅ Complete |
-| **Closures**                  | Important  | ✅ Complete |
-| **Iterators**                 | Essential  | ✅ Complete |
-| **Testing Framework**         | Essential  | ✅ Complete |
-| **Command Line Applications** | Important  | ✅ Complete |
-| **Release Management**        | Important  | ✅ Complete |
-| **Smart Pointers**            | Essential  | ✅ Complete |
-| **Multi-Threading**           | Critical   | ✅ Complete |
-| **Object-Oriented Features**  | Important  | ✅ Complete |
-| **Advanced Pattern Matching** | Important  | ✅ Complete |
+| Skill                            | Importance | Status      |
+| -------------------------------- | ---------- | ----------- |
+| **Basic Syntax**                 | Essential  | ✅ Complete |
+| **Ownership System**             | Critical   | ✅ Complete |
+| **Pattern Matching**             | Important  | ✅ Complete |
+| **Collections**                  | Important  | ✅ Complete |
+| **Error Handling**               | Essential  | ✅ Complete |
+| **Module System**                | Important  | ✅ Complete |
+| **Generic Types**                | Important  | ✅ Complete |
+| **Basic Traits**                 | Important  | ✅ Complete |
+| **Advanced Trait Patterns**      | Important  | ✅ Complete |
+| **Lifetimes**                    | Critical   | ✅ Complete |
+| **Closures**                     | Important  | ✅ Complete |
+| **Iterators**                    | Essential  | ✅ Complete |
+| **Testing Framework**            | Essential  | ✅ Complete |
+| **Command Line Applications**    | Important  | ✅ Complete |
+| **Release Management**           | Important  | ✅ Complete |
+| **Smart Pointers**               | Essential  | ✅ Complete |
+| **Multi-Threading**              | Critical   | ✅ Complete |
+| **Object-Oriented Features**     | Important  | ✅ Complete |
+| **Advanced Pattern Matching**    | Important  | ✅ Complete |
+| **Comprehensive Pattern Syntax** | Important  | ✅ Complete |
 
 ## 💡 Tips for Success
 
@@ -619,6 +637,8 @@ cd pattern_matching && cargo run --bin refutability
 - **Dynamic dispatch overhead** - Balance flexibility with performance costs
 - **Pattern exhaustiveness** - Ensure all cases are covered in `match` expressions
 - **Refutability rules** - Use correct pattern types in different contexts (`let` vs `if let`)
+- **Match guard precedence** - Understand how guards interact with multiple patterns
+- **Destructuring depth** - Balance readability with deeply nested pattern matching
 
 ### **Best Practices Learned**
 
@@ -653,6 +673,9 @@ cd pattern_matching && cargo run --bin refutability
 - **Leverage exhaustive pattern matching for compile-time safety**
 - **Use `if let` for single-case matching, `match` for multiple cases**
 - **Destructure in function parameters for cleaner code**
+- **Apply range patterns for cleaner numeric and character matching**
+- **Use `@` bindings to capture and test values simultaneously**
+- **Prefer `..` over multiple `_` when ignoring contiguous values**
 
 ### **Real-World Applications**
 
@@ -670,28 +693,30 @@ cd pattern_matching && cargo run --bin refutability
 - **Flexible APIs** using trait objects and polymorphism without inheritance
 - **Type-safe parsers** using exhaustive pattern matching
 - **State machines** with enum-based patterns and match expressions
+- **Configuration parsers** leveraging destructuring and match guards
+- **Protocol handlers** using pattern matching for message routing
 
 ---
 
 ## 📈 Learning Statistics
 
 **Time Investment:** 250+ hours hands-on practice  
-**Code Examples:** 140+ working implementations  
-**Core Concepts Mastered:** 60+ fundamental Rust patterns  
+**Code Examples:** 150+ working implementations  
+**Core Concepts Mastered:** 65+ fundamental Rust patterns  
 **Test Files:** 20+ comprehensive testing examples  
 **Complete Projects:** 4+ real-world applications  
 **Iterator Patterns:** 15+ functional programming examples  
 **Smart Pointer Patterns:** 12+ memory management implementations  
 **Concurrency Examples:** 8+ multi-threading patterns  
 **OOP Implementations:** 5+ object-oriented design patterns  
-**Pattern Matching Examples:** 10+ advanced pattern matching scenarios
+**Pattern Matching Examples:** 20+ advanced pattern matching scenarios including comprehensive syntax
 
 ---
 
 ## 💻 Author
 
 **Peile Wu** (peile.wu.1990@gmail.com)  
-_Updated: October 12, 2025_
+_Updated: October 14, 2025_
 
 ---
 
