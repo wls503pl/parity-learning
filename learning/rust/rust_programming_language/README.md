@@ -330,6 +330,70 @@ This repository documents a systematic journey through **THE RUST PROGRAMMING LA
 - **@ Bindings** - Capture values while testing patterns with `@` operator
 - **Project:** `pattern_matching/` (Complete pattern syntax examples)
 
+### **Phase 12: Advanced Features - Unsafe Rust** ✅
+
+#### 36. **Understanding Unsafe Rust**
+
+- **Why Unsafe Exists** - Static analysis is conservative; hardware is inherently unsafe
+- **Safety Trade-offs** - Trust and responsibility for low-level operations
+- **Scope Containment** - Unsafe blocks isolate unsafe code from safe abstractions
+- **Compiler Still Helps** - Borrow checker still applies within unsafe blocks
+- **Project:** `advanced_feature/`
+
+#### 37. **Dereferencing Raw Pointers**
+
+- **Raw Pointer Types** - `*const T` (immutable) and `*mut T` (mutable)
+- **Safety Differences** - Raw pointers ignore borrowing rules but are not guaranteed valid
+- **Use Cases** - FFI with C code, building safe abstractions compiler cannot verify
+- **Null Pointers** - Raw pointers can be null unlike references
+- **Performance** - Direct memory access without runtime checks
+- **Project:** `advanced_feature/`
+
+#### 38. **Calling Unsafe Functions and Methods**
+
+- **Unsafe Function Declaration** - Mark functions with `unsafe` keyword
+- **Calling Requirements** - Must call within `unsafe` block; caller verifies preconditions
+- **Safe Abstractions** - Wrap unsafe code in safe functions for ergonomic APIs
+- **Example:** `split_at_mut` - Custom slice operation safely wrapping unsafe code
+- **FFI Integration** - Call C library functions safely through type checking
+- **Project:** `advanced_feature/`
+
+#### 39. **Foreign Function Interface (FFI)**
+
+- **extern Keyword** - Simplify creation and use of FFI for calling external code
+- **Application Binary Interface** - Understanding calling conventions (commonly `"C"`)
+- **Calling C Functions** - `extern "C"` blocks for external function declarations
+- **Exposing Rust to Other Languages** - `#[no_mangle]` for public Rust functions
+- **Cross-Language Integration** - Safe interoperability with existing libraries
+- **Project:** `advanced_feature/`
+
+#### 40. **Mutable Static Variables**
+
+- **Static Variables** - Global variables with fixed memory addresses
+- **Immutable Statics** - Safe to access; commonly used for global constants
+- **Mutable Statics** - Require `unsafe` blocks to access/modify
+- **Thread Safety** - Mutable statics can cause data races; use `Mutex<T>` for threading
+- **Performance Implications** - Fixed addresses; consider thread-local storage alternatives
+- **Project:** `advanced_feature/`
+
+#### 41. **Unsafe Traits**
+
+- **Trait Safety** - Traits with invariants compiler cannot verify
+- **unsafe trait** Declaration - Mark traits requiring unsafe implementations
+- **unsafe impl** - Implement unsafe traits only within unsafe blocks
+- **Compiler Guarantees** - Ensures unsafe trait implementations are intentional
+- **Example:** Implementing custom marker traits for type-level programming
+- **Project:** `advanced_feature/`
+
+#### 42. **Building Safe Abstractions Over Unsafe Code**
+
+- **Principle** - Isolate unsafety while providing safe public APIs
+- **Responsibility** - Document invariants and preconditions clearly
+- **Testing** - Comprehensive tests for correctness of unsafe operations
+- **Performance** - Achieve low-level optimization without sacrificing safety for users
+- **Best Practice** - Minimize unsafe blocks and wrap in safe, documented interfaces
+- **Project:** `advanced_feature/` (Complete unsafe patterns with safe abstractions)
+
 ---
 
 ## 📁 Project Directory Structure
@@ -337,6 +401,7 @@ This repository documents a systematic journey through **THE RUST PROGRAMMING LA
 ```
 rust_programming_language/
 ├── adder/                    # Phase 6: Basic testing framework
+├── advanced_feature/         # Phase 12: Unsafe Rust and FFI
 ├── cargo_workspace/          # Workspace management (not documented yet)
 ├── closures/                 # Phase 5: Anonymous functions and environment capture
 ├── common_collections/       # Phase 2: Vector, String, HashMap
@@ -454,6 +519,9 @@ cd pattern_matching && cargo run --bin while_let
 cd pattern_matching && cargo run --bin for
 cd pattern_matching && cargo run --bin function_parameters
 cd pattern_matching && cargo run --bin refutability
+
+# Phase 12: Advanced features - Unsafe Rust
+cd advanced_feature && cargo run  # Review unsafe patterns
 ```
 
 ### **Learning Strategy**
@@ -473,6 +541,8 @@ cd pattern_matching && cargo run --bin refutability
 13. **Embrace trait objects** - Use dynamic dispatch for runtime polymorphism when needed
 14. **Master pattern matching** - Understand when to use exhaustive matching vs conditional patterns
 15. **Practice destructuring** - Break apart complex types elegantly in all contexts
+16. **Learn unsafe Rust intentionally** - Understand when and why unsafety is necessary
+17. **Build safe abstractions** - Contain unsafe code within well-documented safe APIs
 
 ---
 
@@ -589,6 +659,19 @@ cd pattern_matching && cargo run --bin refutability
 - Capture values with `@` bindings while pattern matching
 - Ignore irrelevant values with `_` and `..` patterns
 
+### **Systems Programming and Unsafe Rust**
+
+- Understand when unsafe code is necessary
+- Work with raw pointers and low-level memory
+- Call C code safely through FFI
+- Build safe abstractions over unsafe operations
+- Implement custom smart pointer behavior
+- Manage mutable global state correctly
+- Design interfaces that prevent unsafe code misuse
+- Balance performance with safety guarantees
+- Document invariants and preconditions clearly
+- Contain unsafety within well-defined boundaries
+
 ---
 
 ## 📊 Progress Tracking
@@ -615,6 +698,7 @@ cd pattern_matching && cargo run --bin refutability
 | **Object-Oriented Features**     | Important  | ✅ Complete |
 | **Advanced Pattern Matching**    | Important  | ✅ Complete |
 | **Comprehensive Pattern Syntax** | Important  | ✅ Complete |
+| **Unsafe Rust and FFI**          | Important  | ✅ Complete |
 
 ## 💡 Tips for Success
 
@@ -635,89 +719,4 @@ cd pattern_matching && cargo run --bin refutability
 - **Deadlock prevention** - Use consistent lock ordering with multiple mutexes
 - **Object safety** - Understand why some traits can't be made into trait objects
 - **Dynamic dispatch overhead** - Balance flexibility with performance costs
-- **Pattern exhaustiveness** - Ensure all cases are covered in `match` expressions
-- **Refutability rules** - Use correct pattern types in different contexts (`let` vs `if let`)
-- **Match guard precedence** - Understand how guards interact with multiple patterns
-- **Destructuring depth** - Balance readability with deeply nested pattern matching
-
-### **Best Practices Learned**
-
-- Use `expect()` instead of `unwrap()` for better error messages
-- Handle errors at the right level (don't always propagate)
-- Write tests that expect panics when appropriate
-- Configure panic behavior for production builds
-- Leverage generics for code reuse without runtime cost
-- Use `impl Trait` for simple cases, trait bounds for complex constraints
-- Apply where clauses for readable complex generic bounds
-- Choose static dispatch (`impl Trait`) over dynamic (`Box<dyn Trait>`) when possible
-- Rely on lifetime elision rules when possible, annotate explicitly when needed
-- Avoid `'static` lifetime unless truly necessary
-- Use closures for caching expensive operations
-- **Prefer iterator chains over explicit loops** for better performance and readability
-- **Leverage lazy evaluation** to avoid unnecessary computations
-- **Use method chaining** to create expressive data transformation pipelines
-- Separate stdout and stderr in command-line applications
-- Write tests with descriptive names and custom error messages
-- Test independence ensures reliable test suites
-- **Use `Box<T>` for simple heap allocation and recursive types**
-- **Choose `Rc<T>` for shared ownership in single-threaded contexts**
-- **Apply `RefCell<T>` only when compile-time checking is insufficient**
-- **Prevent cycles with `Weak<T>` in tree and graph structures**
-- **Use channels for thread communication over shared state when possible**
-- **Prefer `Arc<Mutex<T>>` for shared mutable state across threads**
-- **Keep critical sections short** to minimize lock contention
-- **Use trait objects (`Box<dyn Trait>`) when you need runtime polymorphism**
-- **Prefer static dispatch (generics) over dynamic dispatch for performance**
-- **Ensure traits are object-safe when designing for trait objects**
-- **Use encapsulation to hide implementation details and maintain clean APIs**
-- **Leverage exhaustive pattern matching for compile-time safety**
-- **Use `if let` for single-case matching, `match` for multiple cases**
-- **Destructure in function parameters for cleaner code**
-- **Apply range patterns for cleaner numeric and character matching**
-- **Use `@` bindings to capture and test values simultaneously**
-- **Prefer `..` over multiple `_` when ignoring contiguous values**
-
-### **Real-World Applications**
-
-- **CLI tools** with robust error handling
-- **Web services** with memory safety
-- **System programming** without segfaults
-- **Data processing** with performance guarantees
-- **Generic libraries** with flexible, type-safe APIs
-- **High-performance applications** leveraging zero-cost trait abstractions
-- **Safe concurrent programs** with lifetime-validated shared data
-- **Functional data processing** with iterator-based transformations
-- **Production systems** with comprehensive test coverage
-- **Complex data structures** with safe memory management using smart pointers
-- **Multi-threaded applications** with fearless concurrency
-- **Flexible APIs** using trait objects and polymorphism without inheritance
-- **Type-safe parsers** using exhaustive pattern matching
-- **State machines** with enum-based patterns and match expressions
-- **Configuration parsers** leveraging destructuring and match guards
-- **Protocol handlers** using pattern matching for message routing
-
----
-
-## 📈 Learning Statistics
-
-**Time Investment:** 250+ hours hands-on practice  
-**Code Examples:** 150+ working implementations  
-**Core Concepts Mastered:** 65+ fundamental Rust patterns  
-**Test Files:** 20+ comprehensive testing examples  
-**Complete Projects:** 4+ real-world applications  
-**Iterator Patterns:** 15+ functional programming examples  
-**Smart Pointer Patterns:** 12+ memory management implementations  
-**Concurrency Examples:** 8+ multi-threading patterns  
-**OOP Implementations:** 5+ object-oriented design patterns  
-**Pattern Matching Examples:** 20+ advanced pattern matching scenarios including comprehensive syntax
-
----
-
-## 💻 Author
-
-**Peile Wu** (peile.wu.1990@gmail.com)  
-_Updated: October 14, 2025_
-
----
-
-_Master the fundamentals first, then build amazing things_ 🦀
+- **Pattern exhaustiveness** - Ensure all cases are covered in `
