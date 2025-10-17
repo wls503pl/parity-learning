@@ -59,7 +59,7 @@ Raw pointers:
 
 #### Example Code
 
-```
+```rust
 fn main()
 {
     let mut num = 5;
@@ -78,8 +78,6 @@ fn main()
     let r = address as *const i32;
 }
 ```
-
-![Error without unsafe block](./img/dereferencing_raw_pointer.png)
 
 #### Why Use Raw Pointers?
 
@@ -284,13 +282,233 @@ With great power comes great responsibility. Unsafe Rust gives you powerful capa
 
 ---
 
+## Part 2: Advanced Trait Features
+
+### Introduction
+
+Rust traits provide powerful abstractions for defining shared behavior. This section covers advanced trait features including associated types, generic parameters, operator overloading, and the fully qualified syntax for calling methods.
+
+---
+
+### 1. Associated Types
+
+#### Overview
+
+**Associated types** are type placeholders within traits that can be used in trait method signatures. This allows you to define traits containing certain types without knowing what those types are until the trait is implemented.
+
+#### The `Iterator` Trait Example
+
+```rust
+pub trait Iterator {
+    type Item;
+
+    fn next(&mut self) -> Option<Self::Item>;
+}
+```
+
+The `type Item;` declaration is an associated type placeholder. When implementing `Iterator`, you specify what concrete type `Item` should be.
+
+---
+
+### 2. Associated Types vs. Generic Parameters
+
+Associated types and generic parameters both allow for flexibility, but they differ in important ways:
+
+| Aspect                   | Associated Types                                                                   | Generic Parameters                                                                       |
+| ------------------------ | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Type Annotation          | No need to annotate the type each time                                             | Must annotate the type for each implementation                                           |
+| Multiple Implementations | Can only implement a trait once per type                                           | Can implement a trait multiple times for the same type with different generic parameters |
+| Use Case                 | When there's a one-to-one relationship between a type and the trait implementation | When a type should implement the same trait in multiple ways                             |
+
+#### Example Comparison
+
+```rust
+// With Associated Types
+pub trait Iterator {
+    type Item;
+    fn next(&mut self) -> Option<Self::Item>;
+}
+
+impl Iterator for Counter {
+    type Item = u32;
+    fn next(&mut self) -> Option<Self::Item> {
+        None
+    }
+}
+
+// With Generic Parameters
+pub trait Iterator2<T> {
+    fn next(&mut self) -> Option<T>;
+}
+
+impl Iterator2<String> for Counter {
+    fn next(&mut self) -> Option<String> {
+        None
+    }
+}
+
+impl Iterator2<u32> for Counter {
+    fn next(&mut self) -> Option<u32> {
+        None
+    }
+}
+
+struct Counter {}
+
+fn main() {
+    println!("Hello, world!");
+}
+```
+
+In this example, `Counter` implements `Iterator` only once, but can implement `Iterator2` multiple times with different type parameters.
+
+---
+
+### 3. Default Generic Parameters and Operator Overloading
+
+#### Syntax
+
+You can specify a default concrete type for a generic parameter using the syntax: `<PlaceholderType=ConcreteType>`
+
+#### Operator Overloading
+
+Rust does not allow you to create custom operators or overload arbitrary operators. However, you can overload some operators by implementing the corresponding traits from `std::ops`.
+
+#### Example: Implementing the `Add` Trait
+
+```rust
+use std::ops::Add;
+
+#[derive(Debug, PartialEq)]
+struct Point {
+    x: i32,
+    y: i32,
+}
+
+impl Add for Point {
+    type Output = Point;
+
+    fn add(self, other: Point) -> Point {
+        Point {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        }
+    }
+}
+
+fn main() {
+    assert_eq!(
+        Point { x: 1, y: 0 } + Point { x: 2, y: 3 },
+        Point { x: 3, y: 3 }
+    );
+}
+```
+
+By implementing the `Add` trait for `Point`, we enable the use of the `+` operator between two `Point` instances.
+
+#### Primary Use Cases for Default Generic Parameters
+
+- **Extend a type without breaking existing code**: New implementations can use different type parameters while maintaining backward compatibility
+- **Allow customization in specific scenarios**: Provide defaults that work for the majority of users while allowing specialized customization where needed
+
+---
+
+### 4. Fully Qualified Syntax for Disambiguation
+
+#### The Problem: Calling Methods with the Same Name
+
+When a type implements multiple traits or has its own methods, some may share the same name. This creates ambiguity when calling them.
+
+#### The Solution: Fully Qualified Syntax
+
+Rust provides fully qualified syntax to explicitly specify which trait method or associated function you want to call.
+
+#### Example
+
+```rust
+trait Pilot {
+    fn fly(&self);
+}
+
+trait Wizard {
+    fn fly(&self);
+}
+
+struct Human;
+
+impl Pilot for Human {
+    fn fly(&self) {
+        println!("This is your captain speaking.");
+    }
+}
+
+impl Wizard for Human {
+    fn fly(&self) {
+        println!("Up!");
+    }
+}
+
+impl Human {
+    fn fly(&self) {
+        println!("*waving arms furiously*");
+    }
+}
+
+fn main() {
+    let person = Human;
+
+    person.fly();           // Calls the struct's own method
+    Pilot::fly(&person);    // Calls Pilot trait's fly method
+    Wizard::fly(&person);   // Calls Wizard trait's fly method
+}
+```
+
+#### Output
+
+```
+*waving arms furiously*
+This is your captain speaking.
+Up!
+```
+
+#### How It Works
+
+- `person.fly()` calls the method directly on `Human` (prioritized when available)
+- `Pilot::fly(&person)` explicitly calls the `fly` method from the `Pilot` trait
+- `Wizard::fly(&person)` explicitly calls the `fly` method from the `Wizard` trait
+
+#### Calling Associated Functions
+
+For associated functions (functions that don't take `self` as a parameter), you must use the fully qualified syntax:
+
+```rust
+trait Animal {
+    fn name() -> String;
+}
+
+struct Dog;
+
+impl Animal for Dog {
+    fn name() -> String {
+        String::from("Dog")
+    }
+}
+
+fn main() {
+    // This requires fully qualified syntax
+    println!("{}", <Dog as Animal>::name());
+}
+```
+
+---
+
 ## Summary
 
-Unsafe Rust is a powerful tool that allows you to:
+Advanced trait features in Rust provide powerful mechanisms for:
 
-- Work directly with raw pointers
-- Call functions from other languages
-- Implement low-level optimizations
-- Build safe abstractions over unsafe operations
+- **Associated types**: Define flexible trait contracts without knowing concrete types upfront
+- **Generic parameters**: Enable multiple trait implementations for the same type with different type parameters
+- **Operator overloading**: Customize operators by implementing traits from `std::ops`
+- **Fully qualified syntax**: Disambiguate method calls when multiple implementations exist
 
-However, it requires careful attention to detail and thorough understanding of memory safety principles. Always prefer safe Rust when possible, and use unsafe only when necessary and with proper encapsulation.
+Combined with unsafe Rust capabilities, these features give you the tools to build both safe abstractions and high-performance systems code.
