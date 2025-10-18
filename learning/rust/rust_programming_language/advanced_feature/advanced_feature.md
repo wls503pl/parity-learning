@@ -2,7 +2,7 @@
 
 **Author:** Peile Wu  
 **Contact:** peile.wu.1990@gmail.com  
-**Date:** October 25, 2025
+**Date:** October 18, 2025
 
 ---
 
@@ -33,7 +33,7 @@ Use the `unsafe` keyword to switch to unsafe Rust and create a block containing 
 
 - `unsafe` does **NOT** disable the borrow checker or other safety checks
 - Memory safety errors must be contained within `unsafe` blocks
-- Isolate unsafe code as much as possible—ideally, encapsulate it in safe abstractions that provide safe APIs
+- Isolate unsafe code as much as possibleâ€"ideally, encapsulate it in safe abstractions that provide safe APIs
 
 ---
 
@@ -286,7 +286,7 @@ With great power comes great responsibility. Unsafe Rust gives you powerful capa
 
 ### Introduction
 
-Rust traits provide powerful abstractions for defining shared behavior. This section covers advanced trait features including associated types, generic parameters, operator overloading, and the fully qualified syntax for calling methods.
+Rust traits provide powerful abstractions for defining shared behavior. This section covers advanced trait features including associated types, generic parameters, operator overloading, fully qualified syntax for calling methods, supertrait relationships, and the newtype pattern.
 
 ---
 
@@ -423,7 +423,11 @@ When a type implements multiple traits or has its own methods, some may share th
 
 Rust provides fully qualified syntax to explicitly specify which trait method or associated function you want to call.
 
-#### Example
+**Syntax:** `<Type as Trait>::function(receiver_if_method, next_arg, ...);`
+
+This syntax can be used anywhere you call a function or method. It allows you to omit parts that can be inferred from other contexts. Use it when Rust cannot determine which specific implementation you intend to call.
+
+#### Example with Trait Methods
 
 ```rust
 trait Pilot {
@@ -483,22 +487,163 @@ For associated functions (functions that don't take `self` as a parameter), you 
 
 ```rust
 trait Animal {
-    fn name() -> String;
+    fn baby_name() -> String;
 }
 
 struct Dog;
 
+impl Dog {
+    fn baby_name() -> String {
+        String::from("Spot")
+    }
+}
+
 impl Animal for Dog {
-    fn name() -> String {
-        String::from("Dog")
+    fn baby_name() -> String {
+        String::from("puppy")
     }
 }
 
 fn main() {
-    // This requires fully qualified syntax
-    println!("{}", <Dog as Animal>::name());
+    // Direct call to the struct's associated function
+    println!("A baby dog is called a {}", Dog::baby_name());
+
+    // Fully qualified syntax to call the trait's associated function
+    println!("A baby dog is called a {}", <Dog as Animal>::baby_name());
 }
 ```
+
+#### Output
+
+```
+A baby dog is called a Spot
+A baby dog is called a puppy
+```
+
+---
+
+### 5. Supertraits: Requiring Trait Functionality Within Traits
+
+#### Overview
+
+When you need to use another trait's functionality within a trait definition, you can require that implementing types also implement that other trait. The required trait is called a **supertrait** of your trait.
+
+#### Syntax
+
+Specify the supertrait dependency using the syntax: `trait MyTrait: SuperTrait`
+
+#### Example
+
+```rust
+use std::fmt;
+
+trait OutlinePrint: fmt::Display {
+    fn outline_print(&self) {
+        let output = self.to_string();
+        let len = output.len();
+        println!("{}", "*".repeat(len + 4));
+        println!("*{}*", " ".repeat(len + 2));
+        println!("* {} *", output);
+        println!("*{}*", " ".repeat(len + 2));
+        println!("{}", "*".repeat(len + 4));
+    }
+}
+
+struct Point {
+    x: i32,
+    y: i32,
+}
+
+impl OutlinePrint for Point {}
+
+impl fmt::Display for Point {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "({}, {})", self.x, self.y)
+    }
+}
+
+fn main() {
+    let point = Point { x: 1, y: 3 };
+    point.outline_print();
+}
+```
+
+#### How It Works
+
+- `OutlinePrint: fmt::Display` declares that any type implementing `OutlinePrint` must also implement `fmt::Display`
+- The `outline_print` method calls `self.to_string()`, which requires the `Display` trait implementation
+- When implementing `OutlinePrint` for `Point`, we must also implement `fmt::Display` for `Point`
+- This ensures all required functionality is available when the method is called
+
+#### Key Benefits
+
+- **Type safety**: The compiler verifies that all required traits are implemented
+- **Code reusability**: Access to all supertrait functionality within your trait methods
+- **Clear contracts**: Explicitly documents dependencies between traits
+
+---
+
+### 6. The Newtype Pattern for External Traits on External Types
+
+#### The Problem: The Orphan Rule
+
+Rust has a coherence rule, often called the **orphan rule**, which states: you can only implement a trait on a type if either the trait or the type (or both) is defined in your local package. This prevents conflicts and ambiguity in the type system.
+
+This rule prevents you from implementing external traits on external types. For example, you cannot implement the `Display` trait from the standard library on `Vec<String>`.
+
+#### The Solution: The Newtype Pattern
+
+Use the **newtype pattern** to work around the orphan rule by creating a new wrapper type around an external type. This is a lightweight wrapper structure, typically implemented using a tuple struct.
+
+#### Example
+
+```rust
+use std::fmt;
+
+struct Wrapper(Vec<String>);
+
+impl fmt::Display for Wrapper {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "[{}]", self.0.join(", "))
+    }
+}
+
+fn main() {
+    let w = Wrapper(vec![
+        String::from("hello"),
+        String::from("world")
+    ]);
+    println!("w = {}", w);
+}
+```
+
+#### Output
+
+```
+w = [hello, world]
+```
+
+#### How It Works
+
+- `Wrapper` is a new type that wraps `Vec<String>`
+- We can now implement `Display` for `Wrapper` (a local type)
+- The internal `Vec<String>` is accessed via `self.0`
+- This pattern is zero-cost: the wrapper is optimized away at compile time
+
+#### Advantages of the Newtype Pattern
+
+- **Bypasses the orphan rule**: Implement external traits on external types indirectly
+- **Semantic clarity**: Gives a meaningful name to the wrapped type
+- **Type safety**: Creates a distinct type, preventing accidental mixing with unwrapped values
+- **Zero overhead**: No runtime cost due to compiler optimizations
+- **Flexibility**: Can add methods and implement other traits for the wrapper
+
+#### When to Use the Newtype Pattern
+
+- Implementing a trait not defined in your crate on a type not defined in your crate
+- Creating type-safe wrappers around primitive types
+- Adding domain-specific functionality to standard library types
+- Improving code readability by giving meaningful names to wrapped values
 
 ---
 
@@ -510,5 +655,7 @@ Advanced trait features in Rust provide powerful mechanisms for:
 - **Generic parameters**: Enable multiple trait implementations for the same type with different type parameters
 - **Operator overloading**: Customize operators by implementing traits from `std::ops`
 - **Fully qualified syntax**: Disambiguate method calls when multiple implementations exist
+- **Supertraits**: Establish trait dependencies and ensure required functionality is available
+- **Newtype pattern**: Implement external traits on external types while maintaining type safety
 
 Combined with unsafe Rust capabilities, these features give you the tools to build both safe abstractions and high-performance systems code.

@@ -10,3 +10,6 @@ name = "ur"
 path = "./src/unsafe_rust.rs"
 
 
+[[bin]]
+name = "fqs"
+path = "./src/fully_qualified_syntax.rs"
