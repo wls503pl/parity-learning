@@ -1,3 +1,6 @@
 # parity-learning
 
-Self learning, Simple Typescript/Rust project ...
+Self learning:
+
+- Typescript & Rust programming language basics
+- Understanding of Polkadot
