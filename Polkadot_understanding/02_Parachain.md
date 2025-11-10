@@ -8,7 +8,7 @@
 
 ## Network Architecture
 
-![Collator Ferry](./img/01_Parachain/parachain_structure.png)
+![Collator Ferry](./img/02_Parachain/parachain_structure.png)
 
 - Collators are independent programs joining both Parachain and Relaychain P2P networks;
 - Collators ferry information from Parachain to Relaychain as intermediate nodes
@@ -17,7 +17,7 @@
 
 ## Overall Process
 
-![Candidate Flow](./img/01_Parachain/parachain_overall_process.png)
+![Candidate Flow](./img/02_Parachain/parachain_overall_process.png)
 
 - The parallel chain phase refers to the collator of the parallel chain proposing a candidate block to a group of validators currently assigned to that parallel chain.
 - Collator nodes are active on a unique parallel chain, submitting state transition proposals and their validity proofs.

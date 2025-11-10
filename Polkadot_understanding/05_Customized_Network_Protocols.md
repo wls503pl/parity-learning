@@ -8,7 +8,7 @@
 
 ## Broadcast Verification Results - Network Design
 
-![Network Architecture](./img/04_Customized_Network_Protocols/broadcast_verification_results.png)
+![Network Architecture](./img/05_Customized_Network_Protocols/broadcast_verification_results.png)
 
 On the substrate network protocol, the Relay chain defines a standardized network protocol based on its own shared knowledge, building a set of deterministic network protocols.
 
@@ -26,7 +26,7 @@ The network protocol consists mainly of two component groups: `protocol` and `go
 
 ## Candidate Receipt
 
-![Candidate Receipt Structure](./img/04_Customized_Network_Protocols/candidate_receipt.png)
+![Candidate Receipt Structure](./img/05_Customized_Network_Protocols/candidate_receipt.png)
 
 For each block of every parachain, the final receipt on the relay chain is called a candidate receipt.
 
@@ -49,8 +49,6 @@ For each block of every parachain, the final receipt on the relay chain is calle
 
 ## Block Production Process
 
-![Block Production Flow](./img/04_Customized_Network_Protocols/packaging_blocks.png)
-
 The packaging block process involves multiple stages from slot assignment through block finalization:
 
 1. **Collator Propose:** Collator proposes a candidate block and provides validity proof
@@ -65,7 +63,7 @@ The packaging block process involves multiple stages from slot assignment throug
 
 ## Packaging Block
 
-![Packaging Block Stages](./img/04_Customized_Network_Protocols/packaging_blocks.png)
+![Packaging Block Stages](./img/05_Customized_Network_Protocols/packaging_blocks.png)
 
 - Once more than half of the validators approve, the candidate receipt is ready
 - substrate on each slot, babe calls the slot's on_slot function

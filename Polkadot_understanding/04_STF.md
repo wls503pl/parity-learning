@@ -8,7 +8,7 @@
 
 ## STF - Merkle Tree
 
-![Merkle Tree Structure](./img/03_State_Transition_Function/STF_MerkleTree.png)
+![Merkle Tree Structure](./img/04_State_Transition_Function/STF_MerkleTree.png)
 
 - Parachain state is stored in a structure called a Merkle tree
 - All state values are leaf nodes of this tree
@@ -20,7 +20,7 @@
 
 ## STF - Verification
 
-![Merkle Proof Verification](./img/03_State_Transition_Function/tree_validation.png)
+![Merkle Proof Verification](./img/04_State_Transition_Function/tree_validation.png)
 
 - **Merkle Property:** If a certain value is modified, only the hash values of affected nodes need to be recalculated, while unaffected branches remain unchanged
 - **Hash Calculation Example:** `Hash(A1, A2, ..., A8) -> Hash(A1, A2, ..., A7, B8)`
@@ -35,7 +35,7 @@
 
 ## STF - Verification Process
 
-![Verification Process Diagram](./img/03_State_Transition_Function/verification_process.png)
+![Verification Process Diagram](./img/04_State_Transition_Function/verification_process.png)
 
 The concrete verification process on the relay chain:
 
@@ -59,7 +59,7 @@ The concrete verification process on the relay chain:
 
 ## STF - Trust Free Shared Security
 
-![Trust Free Shared Security](./img/03_State_Transition_Function/trust_free_shared_security.png)
+![Trust Free Shared Security](./img/04_State_Transition_Function/trust_free_shared_security.png)
 
 - Polkadot verification process does not check every individual state value in parachains
 - Through block execution, verification is performed on modified values to ensure changes are valid
@@ -73,7 +73,7 @@ The concrete verification process on the relay chain:
 
 ## STF - Executor
 
-![Executor Architecture](./img/03_State_Transition_Function/STF_executor.png)
+![Executor Architecture](./img/04_State_Transition_Function/STF_executor.png)
 
 - Validators ultimately use an executor to perform STF verification
 - Each validator has a `validation_pool`

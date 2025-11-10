@@ -27,13 +27,13 @@
 
 ## Polkadot Concept Overview
 
-![Polkadot Concept Diagram](./img/Overview/polkadot_concept_diagram.png)
+![Polkadot Concept Diagram](./img/01_Overview/polkadot_concept_diagram.png)
 
 ---
 
 ## Overall Architecture
 
-![Polkadot Architecture](./img/Overview/polkadot_structure.png)
+![Polkadot Architecture](./img/01_Overview/polkadot_structure.png)
 
 **Relay Chain** - Polkadot's core; responsible for network security, consensus and cross-chain interoperability.
 
@@ -47,7 +47,7 @@
 
 ## Consensus Participants
 
-![Consensus Participants](./img/Overview/consensus_participants.png)
+![Consensus Participants](./img/01_Overview/consensus_participants.png)
 
 **Nominators** - Select trusted validators and stake DOTs to secure Relay Chain.
 
@@ -61,7 +61,7 @@
 
 ## Polkadot and Substrate Relationship
 
-![Polkadot and Substrate](./img/Overview/polkadot_substrate.png)
+![Polkadot and Substrate](./img/01_Overview/polkadot_substrate.png)
 
 To enable ecosystem partners to quickly build parachains, Parity abstracts the generic logic of Polkadot, forming a Substrate.
 Polkadot is then built upon this Substrate.
@@ -76,7 +76,7 @@ Polkadot codebase contains two major customized logic:
 
 ## Cross-Chain Protocol Process: Availability and Validity
 
-![Cross-Chain Protocol](./img/Overview/cross-chain_protocol_process.png)
+![Cross-Chain Protocol](./img/01_Overview/cross-chain_protocol_process.png)
 
 1. Parachain stage
 2. Relay chain submission stage

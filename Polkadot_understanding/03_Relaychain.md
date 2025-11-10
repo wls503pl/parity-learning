@@ -8,7 +8,7 @@
 
 ## Validator Assignment and Slot Distribution
 
-![Relay Chain Slot Structure](./img/02_Relaychain/relaychain_slot.png)
+![Relay Chain Slot Structure](./img/03_Relaychain/relaychain_slot.png)
 
 The relay chain organizes validator responsibilities through a slot-based system that ensures fair distribution and randomized assignment:
 
