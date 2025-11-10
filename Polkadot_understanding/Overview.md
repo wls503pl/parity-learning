@@ -1,4 +1,4 @@
-# Polkadot Core Concepts: Cross-Chain and Shared Security
+# Polkadot Cross-Chain Protocol: Overview
 
 **Author:** Peile Wu  
 **Email:** peile.wu.1990@gmail.com  
