@@ -24,10 +24,9 @@ The relay chain organizes validator responsibilities through a slot-based system
 The duty roster mechanism determines which validators are assigned to which parachains across different slots through a randomized but deterministic process:
 
 - Each parachain receives an assigned set of validators
-- Validator assignment is based on a pseudo-random number derived from the previous block 81 blocks ago
-- The assignment follows a shuffle algorithm based on the right-side shuffling approach
+- Validator assignment is based on a pseudo-random number derived from the previous block
+- The assignment follows a 'shuffle' algorithm
 - Random assignment ensures that validators are randomly selected for each slot distribution, making each slot's validators unpredictable
-- This system does not employ Verifiable Random Function (VRF) as described in the following section
 
 ---
 
@@ -57,9 +56,9 @@ VRF is utilized in Polkadot's BABE (Blind Assignment for Blockchain Extension) p
 
 **Result Threshold and Slot Assignment:**
 
-- The result from VRF computation is compared against a threshold value. In Polkadot, the result must be smaller than a threshold to qualify the validator for block proposal in a given slot (see Code1, Code2)
+- The result from VRF computation is compared against a threshold value. In Polkadot, the result must be smaller than a threshold to qualify the validator for block proposal in a given slot
 - The info value in each slot is a globally fixed value for that slot period
-- In Polkadot, info is referred to as `Ftranscript`, which concatenates multiple elements: one pseudo-random value (derived from the hash of N-2 epochs before combined with hashes of Code1 and Code2), slot number, and epoch index
+- In Polkadot, info is referred to as `Ftranscript`, which concatenates multiple elements: one pseudo-random value (derived from the hash of N-2 epochs before combined with hashes), slot number, and epoch index
 
 **Validator Slot Participation:**
 

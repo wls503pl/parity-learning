@@ -36,11 +36,6 @@
 
 ---
 
-## Testing Method
-
-- In Polkadot's code repository, there is an [adder](https://github.com/paritytech/polkadot-sdk/tree/master/polkadot/parachain/test-parachains/adder) module used to simulate the simplest Parachain
-- In actual use, Parachains need to reference [Cumulus](https://github.com/paritytech/polkadot-sdk/tree/master/cumulus) code repository to integrate it into Relaychain
-
-## Code understanding
+## Testing Method & Code understanding
 
 To be done.
